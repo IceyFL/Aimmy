@@ -7,3 +7,5 @@ It is also under the namespace Steam rather than AimmyWPF, if a lot of people be
 I also decided to remove the mouse sensitivity and add 2 seperate ones that control the sensitivity on the X and Y axis seperately
 
 You can join my [Discord](https://discord.gg/MpSKK9epc7) and message me(presidentelmo) if you need any help.
+
+Make sure to compile as x64 Release
