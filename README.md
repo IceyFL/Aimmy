@@ -1,3 +1,9 @@
 # Undetected Aimmy
 
-This is a version of [Aimmy](https://github.com/Babyhamsta/Aimmy)
+This is a modified version of [Aimmy](https://github.com/Babyhamsta/Aimmy)
+It is modified in a way that it should be undetectable as it now has a constantly changin title.
+It is also under the namespace Steam rather than AimmyWPF, if a lot of people begin to use this version, to ensure your version is not detected go into properties and change the default namespace and assembaly name.
+
+I also decided to remove the mouse sensitivity and add 2 seperate ones that control the sensitivity on the X and Y axis seperately
+
+You can join my [Discord](https://discord.gg/MpSKK9epc7) and message me(presidentelmo) if you need any help.
