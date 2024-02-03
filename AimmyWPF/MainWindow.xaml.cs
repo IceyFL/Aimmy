@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
+using System.IO;    
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -182,6 +182,7 @@ namespace AimmyWPF
 
             // Start the loop that runs the model
             Task.Run(() => StartModelCaptureLoop());
+            Task.Run(() => TitleLoop());
         }
 
         private HashSet<string> AvailableModels = new();
@@ -410,6 +411,23 @@ namespace AimmyWPF
 
                 // We have to have some sort of delay here to not overload the CPU / reduce CPU usage.
                 await Task.Delay(1);
+            }
+        }
+
+        private async Task TitleLoop()
+        {
+            cts = new CancellationTokenSource();
+
+            while (!cts.Token.IsCancellationRequested)
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    Random random = new Random();
+                    int randomNumber = random.Next(1, 10000);
+                    string title = randomNumber.ToString("D4");
+                    this.Title = title;
+                });
+                await Task.Delay(2000);
             }
         }
 

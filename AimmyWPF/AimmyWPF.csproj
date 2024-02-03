@@ -12,6 +12,8 @@
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>Steam</AssemblyName>
+    <RootNamespace>Steam</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -33,7 +35,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Accord.Math" Version="3.8.0" />
     <PackageReference Include="Accord.Statistics" Version="3.8.0" />
     <PackageReference Include="Costura.Fody" Version="5.7.0">
       <PrivateAssets>all</PrivateAssets>
@@ -44,9 +45,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="KdTree" Version="1.4.1" />
-    <PackageReference Include="MaterialDesignColors" Version="3.0.0-ci472" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci472" />
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageReference Include="MaterialDesignColors" Version="3.0.0-ci472">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci472">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
     <PackageReference Include="Microsoft.ML.OnnxRuntime.DirectML" Version="1.16.3" />
     <PackageReference Include="MouseKeyHook" Version="5.7.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -76,6 +80,32 @@
     <Content Update="C:\Users\Admin\.nuget\packages\accord\3.8.0\build\Accord.dll.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
   </ItemGroup>
   
 </Project>
