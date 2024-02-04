@@ -61,6 +61,8 @@ namespace AimmyWPF
             SettingsMenu
         }
 
+        private DateTime lastExecutionTime = DateTime.MinValue;
+
         // Changed to Dynamic from Double because it was making the Config System hard to rework :/
         public Dictionary<string, dynamic> aimmySettings = new()
         {
@@ -74,7 +76,8 @@ namespace AimmyWPF
             { "Trigger_Delay", 0.1 },
             { "AI_Min_Conf", 50 },
             { "AimMethod", 0 },
-            { "RecoilStrength", 10 }
+            { "RecoilStrength", 10 },
+            { "AIFPS", 40 }
         };
 
         private Dictionary<string, bool> toggleState = new()
@@ -404,18 +407,23 @@ namespace AimmyWPF
 
             while (!cts.Token.IsCancellationRequested)
             {
-                if (toggleState["AimbotToggle"] && Bools.ConstantTracking == false)
+                TimeSpan elapsed = DateTime.Now - lastExecutionTime;
+                if (elapsed.TotalMilliseconds > 1000.0 / aimmySettings["AIFPS"])
                 {
-                    if (IsHolding_Binding)
+                    lastExecutionTime = DateTime.Now;
+                    if (toggleState["AimbotToggle"] && Bools.ConstantTracking == false)
+                    {
+                        if (IsHolding_Binding)
+                            await ModelCapture();
+                    }
+                    else if (toggleState["AimbotToggle"] && Bools.ConstantTracking)
+                    {
                         await ModelCapture();
-                }
-                else if (toggleState["AimbotToggle"] && Bools.ConstantTracking)
-                {
-                    await ModelCapture();
-                }
-                else if (!toggleState["AimbotToggle"] && toggleState["TriggerBot"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
-                {
-                    await ModelCapture(true);
+                    }
+                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBot"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
+                    {
+                        await ModelCapture(true);
+                    }
                 }
 
                 //if (toggleState["AimbotToggle"] && (IsHolding_Binding || toggleState["AlwaysOn"]))
@@ -693,6 +701,22 @@ namespace AimmyWPF
             };
 
             AimScroller.Children.Add(AimMethod);
+
+            ASlider FPS = new(this, "AI FPS", "AI FPS",
+            "This setting controls how many scans the AI does per second.",
+            1);
+
+            FPS.Slider.Minimum = 0;
+            FPS.Slider.Maximum = 200;
+            FPS.Slider.Value = aimmySettings["AIFPS"];
+            FPS.Slider.TickFrequency = 1;
+            FPS.Slider.ValueChanged += (s, x) =>
+            {
+                double method = FPS.Slider.Value;
+                aimmySettings["AIFPS"] = method;
+            };
+
+            AimScroller.Children.Add(FPS);
 
             AToggle AimOnlyWhenBindingHeld = new(this, "Aim only when Trigger Button is held", // this can be simplifed with a toggle between constant and hold (toggle/hold), ill do it later.
 "This will stop the AI from aiming unless the Trigger Button is held.");
