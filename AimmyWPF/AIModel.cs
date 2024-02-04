@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -158,18 +159,6 @@ namespace AimmyAimbot
             // Capture a screenshot
             Bitmap frame = ScreenGrab(detectionBox);
 
-            // Save frame asynchronously if the option is turned on
-            if (CollectData && Bools.ConstantTracking == false)
-            {
-                DateTime currentTime = DateTime.Now;
-                if ((currentTime - lastSavedTime).TotalSeconds >= 0.5)
-                {
-                    lastSavedTime = currentTime;
-                    string uuid = Guid.NewGuid().ToString();
-                    await Task.Run(() => frame.Save($"bin/images/{uuid}.jpg"));
-                }
-            }
-
             // Convert the Bitmap to float array and normalize
             float[] inputArray = BitmapToFloatArray(frame);
             if (inputArray == null) { return null; }
@@ -230,6 +219,35 @@ namespace AimmyAimbot
 
             // Querying the KDTree for the closest prediction to the center.
             var nodes = tree.GetNearestNeighbours(new[] { IMAGE_SIZE / 2.0f, IMAGE_SIZE / 2.0f }, 1);
+
+            // Save frame asynchronously if the option is turned on
+            if (CollectData)
+            {
+                DateTime currentTime = DateTime.Now;
+                if ((currentTime - lastSavedTime).TotalSeconds >= 0.5)
+                {
+                    lastSavedTime = currentTime;
+                    string uuid = Guid.NewGuid().ToString();
+                    if (nodes.Length > 0)
+                    {
+                        await Task.Run(() => frame.Save($"bin/images/{uuid}.jpg"));
+                        var closestPrediction = nodes[0].Value;
+
+                        // Create and write to the label file
+                        string labelFilePath = $"bin/labels/{uuid}.txt";
+                        using (StreamWriter writer = new StreamWriter(labelFilePath))
+                        {
+                            // Convert coordinates to YOLO format and write to the file
+                            float x = closestPrediction.Rectangle.X / IMAGE_SIZE;
+                            float y = closestPrediction.Rectangle.Y / IMAGE_SIZE;
+                            float width = closestPrediction.Rectangle.Width / IMAGE_SIZE;
+                            float height = closestPrediction.Rectangle.Height / IMAGE_SIZE;
+
+                            writer.WriteLine($"0 {x + width / 2} {y + height / 2} {width} {height}");
+                        }
+                    }
+                }
+            }
 
             return nodes.Length > 0 ? nodes[0].Value : (Prediction?)null;
         }
