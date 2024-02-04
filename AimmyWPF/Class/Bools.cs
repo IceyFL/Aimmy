@@ -12,6 +12,8 @@
         public static bool ShowFOV = false;
         public static bool TravellingFOV = false;
 
+        public static bool Recoil = false;
+
         public static bool ShowDetectedPlayerWindow = false;
         public static bool ShowCurrentDetectedPlayer = false;
         public static bool ShowUnfilteredDetectedPlayer = false;

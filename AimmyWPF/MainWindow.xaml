@@ -79,15 +79,15 @@
                                     BorderBrush="{x:Null}"
                                     Padding="0,0,0,0"
                                     BorderThickness="0,0,0,0"
-                                    Content="Auto Trigger"
+                                    Content="Misc"
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
                                     Width="100"
-                                    Margin="110,0,0,0"
+                                    Margin="90,0,0,0"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="White"
                                     Click="Selection_Click"
-                                    Tag="TriggerMenu" />
+                                    Tag="MiscMenu" />
                             <Button x:Name="Selection3"
                                     Background="{x:Null}"
                                     BorderBrush="{x:Null}"
@@ -97,7 +97,7 @@
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
                                     Width="100"
-                                    Margin="220,0,0,0"
+                                    Margin="180,0,0,0"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="White"
                                     Click="Selection_Click"
@@ -111,7 +111,7 @@
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
                                     Width="100"
-                                    Margin="320,0,0,0"
+                                    Margin="280,0,0,0"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="White"
                                     Click="Selection_Click"
@@ -127,11 +127,11 @@
                                   Visibility="Visible">
                         <StackPanel x:Name="AimScroller" />
                     </ScrollViewer>
-                    <ScrollViewer x:Name="TriggerMenu"
+                    <ScrollViewer x:Name="MiscMenu"
                                   VerticalScrollBarVisibility="Hidden"
                                   PanningMode="VerticalOnly"
                                   Visibility="Collapsed">
-                        <StackPanel x:Name="TriggerScroller" />
+                        <StackPanel x:Name="MiscScroller" />
                     </ScrollViewer>
                     <Grid x:Name="SelectorMenu"
                           Visibility="Collapsed">

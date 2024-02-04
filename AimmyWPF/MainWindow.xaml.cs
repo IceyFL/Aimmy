@@ -46,13 +46,17 @@ namespace AimmyWPF
 
         private AIModel _onnxModel;
         private InputBindingManager bindingManager;
+        private InputBindingManager RightClick;
+        private InputBindingManager LeftClick;
         private bool IsHolding_Binding = false;
+        private bool IsHolding_Left = false;
+        private bool IsHolding_Right = false;
         private CancellationTokenSource cts;
 
         private enum MenuPosition
         {
             AimMenu,
-            TriggerMenu,
+            MiscMenu,
             SelectorMenu,
             SettingsMenu
         }
@@ -68,7 +72,9 @@ namespace AimmyWPF
             { "Y_Offset", 0 },
             { "X_Offset", 0 },
             { "Trigger_Delay", 0.1 },
-            { "AI_Min_Conf", 50 }
+            { "AI_Min_Conf", 50 },
+            { "AimMethod", 0 },
+            { "RecoilStrength", 10 }
         };
 
         private Dictionary<string, bool> toggleState = new()
@@ -79,7 +85,8 @@ namespace AimmyWPF
             { "AimViewToggle", false },
             { "TriggerBot", false },
             { "CollectData", false },
-            { "TopMost", false }
+            { "TopMost", false },
+            { "Recoil", false }
         };
 
         // PDW == PlayerDetectionWindow
@@ -150,6 +157,16 @@ namespace AimmyWPF
             bindingManager.OnBindingPressed += (binding) => { IsHolding_Binding = true; };
             bindingManager.OnBindingReleased += (binding) => { IsHolding_Binding = false; };
 
+            RightClick = new InputBindingManager();
+            RightClick.SetupDefault("Right");
+            RightClick.OnBindingPressed += (binding) => { IsHolding_Right = true; };
+            RightClick.OnBindingReleased += (binding) => { IsHolding_Right = false; };
+
+            LeftClick = new InputBindingManager();
+            LeftClick.SetupDefault("Left");
+            LeftClick.OnBindingPressed += (binding) => { IsHolding_Left = true; };
+            LeftClick.OnBindingReleased += (binding) => { IsHolding_Left = false; };
+
             // Load UI
             InitializeMenuPositions();
             //LoadAimMenu();
@@ -183,6 +200,7 @@ namespace AimmyWPF
             // Start the loop that runs the model
             Task.Run(() => StartModelCaptureLoop());
             Task.Run(() => TitleLoop());
+            Task.Run(() => RecoilLoop());
         }
 
         private HashSet<string> AvailableModels = new();
@@ -305,7 +323,7 @@ namespace AimmyWPF
 
         public async Task ModelCapture(bool TriggerOnly = false)
         {
-            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync();
+            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync(aimmySettings["AimMethod"]);
             if (closestPrediction == null)
             {
                 return;
@@ -431,6 +449,19 @@ namespace AimmyWPF
             }
         }
 
+        private async Task RecoilLoop()
+        {
+            cts = new CancellationTokenSource();
+
+            while (!cts.Token.IsCancellationRequested)
+            {
+                if (Bools.Recoil && IsHolding_Right && IsHolding_Left){
+                    mouse_event(MOUSEEVENTF_MOVE, (uint)0, (uint)aimmySettings["RecoilStrength"], 0, 0);
+                }
+                await Task.Delay(50);
+            }
+        }
+
         public void StopModelCaptureLoop()
         {
             if (cts != null)
@@ -447,7 +478,7 @@ namespace AimmyWPF
         private void InitializeMenuPositions()
         {
             AimMenu.Margin = new Thickness(0, 0, 0, 0);
-            TriggerMenu.Margin = new Thickness(560, 0, -560, 0);
+            MiscMenu.Margin = new Thickness(560, 0, -560, 0);
             SelectorMenu.Margin = new Thickness(560, 0, -560, 0);
             SettingsMenu.Margin = new Thickness(1680, 0, -1680, 0);
         }
@@ -550,8 +581,8 @@ namespace AimmyWPF
 
         private void ResetMenuColors()
         {
-            Selection1.Foreground = Selection2.Foreground = Selection3.Foreground = Selection4.Foreground =
-                (System.Windows.Media.Brush)brushcolor.ConvertFromString("#ffffff");
+            Selection1.Foreground = Selection2.Foreground = Selection3.Foreground = Selection4.Foreground = 
+                (Brush)brushcolor.ConvertFromString("#ffffff");
         }
 
         private void ApplyMenuAnimations(MenuPosition position)
@@ -561,28 +592,28 @@ namespace AimmyWPF
             {
                 case MenuPosition.AimMenu:
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinCenter);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinRight);
+                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MiscMenu, MiscMenu.Margin, WinRight);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinVeryRight);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SettingsMenu, SettingsMenu.Margin, WinTooRight);
                     break;
 
-                case MenuPosition.TriggerMenu:
+                case MenuPosition.MiscMenu:
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinLeft);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinCenter);
+                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MiscMenu, MiscMenu.Margin, WinCenter);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinRight);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SettingsMenu, SettingsMenu.Margin, WinVeryRight);
                     break;
 
                 case MenuPosition.SelectorMenu:
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinVeryLeft);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinLeft);
+                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MiscMenu, MiscMenu.Margin, WinLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinCenter);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SettingsMenu, SettingsMenu.Margin, WinRight);
                     break;
 
                 case MenuPosition.SettingsMenu:
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinTooLeft);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinVeryLeft);
+                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MiscMenu, MiscMenu.Margin, WinVeryLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SettingsMenu, SettingsMenu.Margin, WinCenter);
                     break;
@@ -592,7 +623,7 @@ namespace AimmyWPF
         private void UpdateMenuVisibility(MenuPosition position)
         {
             AimMenu.Visibility = (position == MenuPosition.AimMenu) ? Visibility.Visible : Visibility.Collapsed;
-            TriggerMenu.Visibility = (position == MenuPosition.TriggerMenu) ? Visibility.Visible : Visibility.Collapsed;
+            MiscMenu.Visibility = (position == MenuPosition.MiscMenu) ? Visibility.Visible : Visibility.Collapsed;
             SelectorMenu.Visibility = (position == MenuPosition.SelectorMenu) ? Visibility.Visible : Visibility.Collapsed;
             SettingsMenu.Visibility = (position == MenuPosition.SettingsMenu) ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -620,14 +651,13 @@ namespace AimmyWPF
         private void SetMenuState(bool state)
         {
             AimMenu.IsEnabled = state;
-            TriggerMenu.IsEnabled = state;
+            MiscMenu.IsEnabled = state;
             SelectorMenu.IsEnabled = state;
             SettingsMenu.IsEnabled = state;
         }
 
         #endregion More Info Function
-
-        private void LoadAimMenu()
+            private void LoadAimMenu()
         {
             AToggle Enable_AIAimAligner = new(this, "Enable AI Aim Aligner",
                 "This will enable the AI's ability to align the aim.");
@@ -640,6 +670,29 @@ namespace AimmyWPF
             Enable_ConstantAITracking.Reader.Name = "ConstantAITracking";
             SetupToggle(Enable_ConstantAITracking, state => Bools.ConstantTracking = state, Bools.ConstantTracking);
             AimScroller.Children.Add(Enable_ConstantAITracking);
+
+            ASlider AimMethod = new(this, "Aim Method", "Aim Method",
+                "This setting controls how the AI decides which detection to aim at.",
+                1);
+
+            Dictionary<double, string> weaponNames = new Dictionary<double, string>
+            {
+                { 0, "Closest Detection" },
+                { 1, "Highest Confidence Detection" }
+            };
+            AimMethod.Slider.Minimum = 0;
+            AimMethod.Slider.Maximum = 1;
+            AimMethod.Slider.Value = aimmySettings["AimMethod"];
+            AimMethod.Slider.TickFrequency = 1;
+            AimMethod.Slider.ValueChanged += (s, x) =>
+            AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
+            {
+                double method = AimMethod.Slider.Value;
+                aimmySettings["AimMethod"] = method;
+                AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
+            };
+
+            AimScroller.Children.Add(AimMethod);
 
             AToggle AimOnlyWhenBindingHeld = new(this, "Aim only when Trigger Button is held", // this can be simplifed with a toggle between constant and hold (toggle/hold), ill do it later.
 "This will stop the AI from aiming unless the Trigger Button is held.");
@@ -914,13 +967,13 @@ namespace AimmyWPF
             #endregion Visual Debugging Customizer
         }
 
-        private void LoadTriggerMenu()
+        private void LoadMiscMenu()
         {
             AToggle Enable_TriggerBot = new(this, "Enable Auto Trigger",
                 "This will enable the AI's ability to shoot whenever it sees a target.");
             Enable_TriggerBot.Reader.Name = "TriggerBot";
             SetupToggle(Enable_TriggerBot, state => Bools.Triggerbot = state, Bools.Triggerbot);
-            TriggerScroller.Children.Add(Enable_TriggerBot);
+            MiscScroller.Children.Add(Enable_TriggerBot);
 
             ASlider TriggerBot_Delay = new(this, "Auto Trigger Delay", "Seconds",
                 "This slider will control how many miliseconds it will take to initiate a trigger.",
@@ -935,7 +988,29 @@ namespace AimmyWPF
                 aimmySettings["Trigger_Delay"] = TriggerBot_Delay.Slider.Value;
             };
 
-            TriggerScroller.Children.Add(TriggerBot_Delay);
+            MiscScroller.Children.Add(TriggerBot_Delay);
+
+            AToggle RecoilState = new(this, "Anti Recoil",
+"This will counter recoil.");
+            RecoilState.Reader.Name = "RecoilToggle";
+            SetupToggle(RecoilState, state => Bools.Recoil = state, Bools.Recoil);
+            MiscScroller.Children.Add(RecoilState);
+
+            ASlider RecoilStrength = new(this, "Anti Recoil Strength", "Anti Recoil Strength",
+            "This setting controls the strength of the anti recoil.",
+            1);
+
+            RecoilStrength.Slider.Minimum = 1;
+            RecoilStrength.Slider.Maximum = 50;
+            RecoilStrength.Slider.Value = aimmySettings["RecoilStrength"];
+            RecoilStrength.Slider.TickFrequency = 1;
+            RecoilStrength.Slider.ValueChanged += (s, x) =>
+            {
+                double method = RecoilStrength.Slider.Value;
+                aimmySettings["RecoilStrength"] = method;
+            };
+
+            MiscScroller.Children.Add(RecoilStrength);
         }
 
         private void FileWatcher_Reload(object sender, FileSystemEventArgs e)
@@ -1114,11 +1189,11 @@ namespace AimmyWPF
         private void ReloadMenu()
         {
             AimScroller.Children.Clear();
-            TriggerScroller.Children.Clear();
+            MiscScroller.Children.Clear();
             SettingsScroller.Children.Clear();
 
             LoadAimMenu();
-            LoadTriggerMenu();
+            LoadMiscMenu();
             LoadSettingsMenu();
         }
 
