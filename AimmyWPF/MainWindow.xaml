@@ -25,14 +25,6 @@
             <Grid>
                 <Grid VerticalAlignment="Top"
                       Height="40">
-                    <Label HorizontalAlignment="Left"
-                           Width="78"
-                           Foreground="White"
-                           Content="Aimmy"
-                           FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
-                           VerticalContentAlignment="Center"
-                           Padding="15,10,15,10"
-                           FontSize="13" />
                     <Button x:Name="Exit"
                             Background="{x:Null}"
                             BorderBrush="{x:Null}"
@@ -61,19 +53,14 @@
                             Click="Minimize_Click" />
                 </Grid>
                 <Grid x:Name="MenuBar"
-                      Margin="0,40,0,0">
+                      Margin="0,0,0,0">
                     <Border VerticalAlignment="Top"
-                            Margin="10,0"
+                            Margin="0,0,62,0"
                             Height="34"
                             CornerRadius="5,5,5,5"
-                            BorderBrush="#FF1E1E1E"
+                            BorderBrush="#001E1E1E"
                             BorderThickness="1">
                         <Grid>
-                            <Border x:Name="MenuHighlighter"
-                                    Background="#3e8fb0"
-                                    CornerRadius="1"
-                                    Margin="10, 30, 414, 0">
-                            </Border>
                             <Button x:Name="Selection1"
                                     Background="{x:Null}"
                                     BorderBrush="{x:Null}"
@@ -82,7 +69,7 @@
                                     Content="Aim Aligner"
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
-                                    Width="134"
+                                    Width="110"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="#FF3E8FB0"
                                     Click="Selection_Click"
@@ -95,8 +82,8 @@
                                     Content="Auto Trigger"
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
-                                    Width="136"
-                                    Margin="134,0,0,0"
+                                    Width="100"
+                                    Margin="110,0,0,0"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="White"
                                     Click="Selection_Click"
@@ -109,8 +96,8 @@
                                     Content="Model Selector"
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
-                                    Width="134"
-                                    Margin="270,0,0,0"
+                                    Width="100"
+                                    Margin="220,0,0,0"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="White"
                                     Click="Selection_Click"
@@ -123,8 +110,8 @@
                                     Content="Settings"
                                     FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                                     HorizontalAlignment="Left"
-                                    Width="134"
-                                    Margin="404,0,0,0"
+                                    Width="100"
+                                    Margin="320,0,0,0"
                                     materialDesign:RippleAssist.IsDisabled="True"
                                     Foreground="White"
                                     Click="Selection_Click"
@@ -133,7 +120,7 @@
                     </Border>
                 </Grid>
                 <Grid x:Name="Menus"
-                      Margin="10,84,10,10">
+                      Margin="10,54,10,10">
                     <ScrollViewer x:Name="AimMenu"
                                   VerticalScrollBarVisibility="Hidden"
                                   PanningMode="VerticalOnly"

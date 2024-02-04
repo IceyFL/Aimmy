@@ -124,7 +124,7 @@ namespace AimmyWPF
 
             // Check for required folders
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            string[] dirs = { "bin", "bin/models", "bin/images", "bin/configs" };
+            string[] dirs = { "bin", "bin/models", "bin/images", "bin/configs", "bin/labels" };
 
             try
             {
@@ -560,9 +560,6 @@ namespace AimmyWPF
             switch (position)
             {
                 case MenuPosition.AimMenu:
-                    highlighterMargin = new Thickness(10, 30, 414, 0);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MenuHighlighter, MenuHighlighter.Margin, highlighterMargin);
-
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinCenter);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinRight);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinVeryRight);
@@ -570,9 +567,6 @@ namespace AimmyWPF
                     break;
 
                 case MenuPosition.TriggerMenu:
-                    highlighterMargin = new Thickness(144, 30, 278, 0);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MenuHighlighter, MenuHighlighter.Margin, highlighterMargin);
-
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinCenter);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinRight);
@@ -580,9 +574,6 @@ namespace AimmyWPF
                     break;
 
                 case MenuPosition.SelectorMenu:
-                    highlighterMargin = new Thickness(280, 30, 144, 0);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MenuHighlighter, MenuHighlighter.Margin, highlighterMargin);
-
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinVeryLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinCenter);
@@ -590,9 +581,6 @@ namespace AimmyWPF
                     break;
 
                 case MenuPosition.SettingsMenu:
-                    highlighterMargin = new Thickness(414, 30, 10, 0);
-                    Animator.ObjectShift(TimeSpan.FromMilliseconds(500), MenuHighlighter, MenuHighlighter.Margin, highlighterMargin);
-
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), AimMenu, AimMenu.Margin, WinTooLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), TriggerMenu, TriggerMenu.Margin, WinVeryLeft);
                     Animator.ObjectShift(TimeSpan.FromMilliseconds(500), SelectorMenu, SelectorMenu.Margin, WinLeft);
