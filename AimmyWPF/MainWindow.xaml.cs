@@ -326,7 +326,7 @@ namespace AimmyWPF
 
         public async Task ModelCapture(bool TriggerOnly = false)
         {
-            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync(aimmySettings["AimMethod"]);
+            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync((int)aimmySettings["AimMethod"]);
             if (closestPrediction == null)
             {
                 return;
@@ -344,7 +344,6 @@ namespace AimmyWPF
             double XOffset = aimmySettings["X_Offset"];
             int detectedX = (int)((closestPrediction.Rectangle.X + closestPrediction.Rectangle.Width / 2) * scaleX + XOffset);
             int detectedY = (int)((closestPrediction.Rectangle.Y + closestPrediction.Rectangle.Height / 2) * scaleY + YOffset);
-
             Console.WriteLine(AIModel.AIConfidence.ToString());
 
             // Handle Prediction
@@ -361,7 +360,9 @@ namespace AimmyWPF
                 var predictedPosition = predictionManager.GetEstimatedPosition();
 
                 if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
+                {
                     MoveCrosshair(predictedPosition.X, predictedPosition.Y);
+                }
                 //MoveCrosshair(predictedPosition.X, predictedPosition.Y);
 
                 if (Bools.ShowDetectedPlayerWindow && Bools.ShowPrediction)
@@ -378,7 +379,9 @@ namespace AimmyWPF
             else
             {
                 if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
+                {
                     MoveCrosshair(detectedX, detectedY);
+                }
             }
 
             if (Bools.ShowDetectedPlayerWindow)
@@ -466,7 +469,7 @@ namespace AimmyWPF
                 if (Bools.Recoil && IsHolding_Right && IsHolding_Left){
                     mouse_event(MOUSEEVENTF_MOVE, (uint)0, (uint)aimmySettings["RecoilStrength"], 0, 0);
                 }
-                await Task.Delay(50);
+                await Task.Delay(250);
             }
         }
 

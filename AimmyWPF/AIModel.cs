@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static AimmyAimbot.AIModel;
 
 namespace AimmyAimbot
 {
@@ -145,7 +146,7 @@ namespace AimmyAimbot
             return result;
         }
 
-        public async Task<Prediction> GetClosestPredictionToCenterAsync()
+        public async Task<Prediction> GetClosestPredictionToCenterAsync(int aimmethod)
         {
             // Define the detection box
             int halfScreenWidth = Screen.PrimaryScreen.Bounds.Width / 2;
@@ -183,6 +184,7 @@ namespace AimmyAimbot
                                     .ToList();
 
             object treeLock = new object();
+            var predictions = new List<Prediction>();
 
             foreach (var i in filteredIndices)
             {
@@ -214,6 +216,7 @@ namespace AimmyAimbot
                     {
                         tree.Add(new[] { centerX, centerY }, prediction);
                     }
+                    predictions.Add(prediction);
                 }
             }
 
@@ -249,7 +252,15 @@ namespace AimmyAimbot
                 }
             }
 
-            return nodes.Length > 0 ? nodes[0].Value : (Prediction?)null;
+            if (aimmethod == 0)
+            {
+                return nodes.Length > 0 ? nodes[0].Value : (Prediction?)null;
+            }
+            else
+            {
+                var highestConfidencePrediction = predictions.OrderByDescending(p => p.Confidence).FirstOrDefault();
+                return highestConfidencePrediction;
+            }
         }
 
         public void Dispose()
