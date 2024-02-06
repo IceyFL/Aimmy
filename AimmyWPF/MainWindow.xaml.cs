@@ -326,7 +326,7 @@ namespace AimmyWPF
 
         public async Task ModelCapture(bool TriggerOnly = false)
         {
-            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync(aimmySettings["AimMethod"]);
+            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync((int)aimmySettings["AimMethod"]);
             if (closestPrediction == null)
             {
                 return;

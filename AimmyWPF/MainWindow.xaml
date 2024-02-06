@@ -13,6 +13,7 @@
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
+        Background="Transparent"
         Closing="Window_Closing"
         Loaded="Window_Loaded">
     <Grid>
