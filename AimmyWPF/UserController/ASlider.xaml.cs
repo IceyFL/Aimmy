@@ -18,7 +18,7 @@ namespace AimmyWPF.UserController
             Slider.ValueChanged += (s, e) =>
             {
                 if (AdjustNotifier != null)
-                    AdjustNotifier.Content = $"{Slider.Value.ToString()} {NotifierText}";
+                    AdjustNotifier.Content = $"{Slider.Value.ToString()}";
 
                 // Added by Nori
                 Slider.Value = Math.Round(Slider.Value, 2);

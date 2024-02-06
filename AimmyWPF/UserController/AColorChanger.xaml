@@ -5,12 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:AimmyWPF.UserController"
              mc:Ignorable="d"
-             d:DesignHeight="50"
+             d:DesignHeight="40"
              d:DesignWidth="532"
-             Height="50">
+             Height="40">
     <Grid>
-        <Border Background="#FF191919"
-                BorderBrush="#FF1E1E1E"
+        <Border Background="#00191919"
+                BorderBrush="#001E1E1E"
                 BorderThickness="2"
                 CornerRadius="5"
                 Margin="0,0,0,10">

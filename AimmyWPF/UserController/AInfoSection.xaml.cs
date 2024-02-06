@@ -96,11 +96,6 @@ namespace AimmyWPF.UserController
         public AInfoSection()
         {
             InitializeComponent();
-            CheckForUpdates.Click += async (s, e) =>
-            {
-                new NoticeBar("Checking for updates, please wait!").Show();
-                await DoUpdate(VersionNumber.Content.ToString());
-            };
         }
     }
 }

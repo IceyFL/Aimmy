@@ -3,18 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:AimmyWPF.UserController"
              mc:Ignorable="d"
              d:DesignWidth="532"
-             Height="36">
+             Height="26">
+
     <Grid>
         <Label x:Name="Title"
-               Foreground="White"
+               Foreground="Cyan"
                Content="Aim Aligner"
-               FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
+               FontFamily="/Paster2Trappy;component/Fonts/#Atkinson Hyperlegible"
                VerticalContentAlignment="Center"
                Padding="10,0,0,0"
-               FontSize="13"
-               Margin="0,0,47,10" />
+               FontSize="15"
+               Margin="0,0,47,5"
+               FontWeight="Bold"/>
     </Grid>
 </UserControl>
