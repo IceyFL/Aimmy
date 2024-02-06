@@ -668,20 +668,24 @@ namespace AimmyWPF
         #endregion More Info Function
         private void LoadAimMenu()
         {
+            SectionPanel leftPanel = new SectionPanel();
+            SectionPanel rightPanel = new SectionPanel();
 
-            AimScroller.Children.Add(new ALabel("Aiming Configuration"));
+            // Add controls to the aimingConfigurationPanel instead of AimScroller
+            leftPanel.Children.Add(new ALabel("Aiming Configuration"));
+
 
             AToggle Enable_AIAimAligner = new(this, "Enable AI Aim Aligner",
                 "This will enable the AI's ability to align the aim.");
             Enable_AIAimAligner.Reader.Name = "AimbotToggle";
             SetupToggle(Enable_AIAimAligner, state => Bools.AIAimAligner = state, Bools.AIAimAligner);
-            AimScroller.Children.Add(Enable_AIAimAligner);
+            leftPanel.Children.Add(Enable_AIAimAligner);
 
             AToggle Enable_ConstantAITracking = new(this, "Enable Constant AI Aligner",
     "This will let the AI run 24/7 to let Visual Debugging run.");
             Enable_ConstantAITracking.Reader.Name = "ConstantAITracking";
             SetupToggle(Enable_ConstantAITracking, state => Bools.ConstantTracking = state, Bools.ConstantTracking);
-            AimScroller.Children.Add(Enable_ConstantAITracking);
+            leftPanel.Children.Add(Enable_ConstantAITracking);
 
             ASlider AimMethod = new(this, "Aim Method", "Aim Method",
                 "This setting controls how the AI decides which detection to aim at.",
@@ -704,7 +708,7 @@ namespace AimmyWPF
                 AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
             };
 
-            AimScroller.Children.Add(AimMethod);
+            leftPanel.Children.Add(AimMethod);
 
             ASlider FPS = new(this, "AI FPS", "AI FPS",
             "This setting controls how many scans the AI does per second.",
@@ -720,13 +724,13 @@ namespace AimmyWPF
                 aimmySettings["AIFPS"] = method;
             };
 
-            AimScroller.Children.Add(FPS);
+            leftPanel.Children.Add(FPS);
 
             AToggle AimOnlyWhenBindingHeld = new(this, "Aim only when Trigger Button is held", // this can be simplifed with a toggle between constant and hold (toggle/hold), ill do it later.
 "This will stop the AI from aiming unless the Trigger Button is held.");
             AimOnlyWhenBindingHeld.Reader.Name = "AimOnlyWhenBindingHeld";
             SetupToggle(AimOnlyWhenBindingHeld, state => Bools.AimOnlyWhenBindingHeld = state, Bools.AimOnlyWhenBindingHeld);
-            AimScroller.Children.Add(AimOnlyWhenBindingHeld);
+            leftPanel.Children.Add(AimOnlyWhenBindingHeld);
 
             AKeyChanger Change_KeyPress = new("Change Keybind", "Right");
             Change_KeyPress.Reader.Click += (s, x) =>
@@ -740,7 +744,7 @@ namespace AimmyWPF
                 Change_KeyPress.KeyNotifier.Content = binding;
             };
 
-            AimScroller.Children.Add(Change_KeyPress);
+            leftPanel.Children.Add(Change_KeyPress);
 
             //AToggle Enable_AlwaysOn = new AToggle(this, "Aim Align Always On",
             //   "This will keep the aim aligner on 24/7 so you don't have to hold a toggle.");
@@ -752,7 +756,7 @@ namespace AimmyWPF
                "This will use a KalmanFilter algorithm to predict aim patterns for better tracing of enemies.");
             Enable_AIPredictions.Reader.Name = "PredictionToggle";
             SetupToggle(Enable_AIPredictions, state => Bools.AIPredictions = state, Bools.AIPredictions);
-            AimScroller.Children.Add(Enable_AIPredictions);
+            leftPanel.Children.Add(Enable_AIPredictions);
 
             ASlider MouseSensitivtyX = new ASlider(this, "Mouse Sensitivty X", "Sensitivty",
     "This setting controls how fast your mouse moves to a detection, if it moves too fast you need to set it to a higher number.",
@@ -767,7 +771,7 @@ namespace AimmyWPF
                 aimmySettings["Mouse_Sens"] = MouseSensitivtyX.Slider.Value;
             };
 
-            AimScroller.Children.Add(MouseSensitivtyX);
+            leftPanel.Children.Add(MouseSensitivtyX);
 
             ASlider MouseSensitivtyY = new ASlider(this, "Mouse Sensitivty Y", "Sensitivty",
                 "This setting controls how fast your mouse moves to a detection, if it moves too fast you need to set it to a higher number.",
@@ -782,7 +786,7 @@ namespace AimmyWPF
                 aimmySettings["Mouse_SensY"] = MouseSensitivtyY.Slider.Value;
             };
 
-            AimScroller.Children.Add(MouseSensitivtyY);
+            leftPanel.Children.Add(MouseSensitivtyY);
 
             ASlider MouseJitter = new(this, "Mouse Jitter", "Jitter",
                 "This setting controls how much fake jitter is added to the mouse movements. Aim is almost never steady so this adds a nice layer of humanizing onto aim.",
@@ -796,7 +800,7 @@ namespace AimmyWPF
             {
                 aimmySettings["Mouse_Jitter"] = MouseJitter.Slider.Value;
             };
-            AimScroller.Children.Add(MouseJitter);
+            leftPanel.Children.Add(MouseJitter);
 
             ASlider YOffset = new(this, "Y Offset (Up/Down)", "Offset",
                 "This setting controls how high / low you aim. A lower number will result in a higher aim. A higher number will result in a lower aim.",
@@ -811,7 +815,7 @@ namespace AimmyWPF
                 aimmySettings["Y_Offset"] = YOffset.Slider.Value;
             };
 
-            AimScroller.Children.Add(YOffset);
+            leftPanel.Children.Add(YOffset);
 
             ASlider XOffset = new(this, "X Offset (Left/Right)", "Offset",
                 "This setting controls which way your aim leans. A lower number will result in an aim that leans to the left. A higher number will result in an aim that leans to the right",
@@ -826,24 +830,24 @@ namespace AimmyWPF
                 aimmySettings["X_Offset"] = XOffset.Slider.Value;
             };
 
-            AimScroller.Children.Add(XOffset);
+            leftPanel.Children.Add(XOffset);
 
             #region FOV System
 
-            AimScroller.Children.Add(new ALabel("FOV System"));
+            rightPanel.Children.Add(new ALabel("FOV System"));
 
             AToggle Show_FOV = new(this, "Show FOV",
                 "This will show a circle around your screen that show what the AI is considering on the screen at a given moment.");
             Show_FOV.Reader.Name = "ShowFOV";
             SetupToggle(Show_FOV, state => Bools.ShowFOV = state, Bools.ShowFOV);
-            AimScroller.Children.Add(Show_FOV);
+            rightPanel.Children.Add(Show_FOV);
 
             AToggle Travelling_FOV = new(this, "Travelling FOV",
     "This will allow the FOV circle to travel alongside your mouse.\n" +
     "[PLEASE NOTE]: This does not have any effect on the AI's personal FOV, this feature is only for the visual effect.");
             Travelling_FOV.Reader.Name = "TravellingFOV";
             SetupToggle(Travelling_FOV, state => Bools.TravellingFOV = state, Bools.TravellingFOV);
-            AimScroller.Children.Add(Travelling_FOV);
+            rightPanel.Children.Add(Travelling_FOV);
 
             AColorChanger Change_FOVColor = new("FOV Color");
             Change_FOVColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString(OverlayProperties["FOV_Color"]);
@@ -857,7 +861,7 @@ namespace AimmyWPF
                     AwfulPropertyChanger.PostColor(Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
                 }
             };
-            AimScroller.Children.Add(Change_FOVColor);
+            rightPanel.Children.Add(Change_FOVColor);
 
             ASlider FovSlider = new(this, "FOV Size", "Size of FOV",
                 "This setting controls how much of your screen is considered in the AI's decision making and how big the circle on your screen will be.",
@@ -880,43 +884,47 @@ namespace AimmyWPF
                 AwfulPropertyChanger.PostNewFOVSize();
             };
 
-            AimScroller.Children.Add(FovSlider);
+            rightPanel.Children.Add(FovSlider);
 
             #endregion FOV System
 
             #region Visual Debugging
 
-            AimScroller.Children.Add(new ALabel("Visual Debugging"));
+            SectionPanel rightPanel2 = new SectionPanel();
+
+            rightPanel2.Children.Add(new ALabel("Visual Debugging"));
 
             AToggle Show_DetectedPlayerWindow = new(this, "Show Detected Player Window",
                 "Shows the Detected Player Overlay, the options below will not work if this is enabled!");
             Show_DetectedPlayerWindow.Reader.Name = "ShowDetectedPlayerWindow";
             SetupToggle(Show_DetectedPlayerWindow, state => Bools.ShowDetectedPlayerWindow = state, Bools.ShowDetectedPlayerWindow);
-            AimScroller.Children.Add(Show_DetectedPlayerWindow);
+            rightPanel2.Children.Add(Show_DetectedPlayerWindow);
 
             AToggle Show_CurrentDetectedPlayer = new(this, "Show Current Detected Player [Red]",
     "This will show a rectangle on the player that the AI is considering on the screen at a given moment.");
             Show_CurrentDetectedPlayer.Reader.Name = "ShowCurrentDetectedPlayer";
             SetupToggle(Show_CurrentDetectedPlayer, state => Bools.ShowCurrentDetectedPlayer = state, Bools.ShowCurrentDetectedPlayer);
-            AimScroller.Children.Add(Show_CurrentDetectedPlayer);
+            rightPanel2.Children.Add(Show_CurrentDetectedPlayer);
 
             AToggle Show_UnfilteredDetectedPlayer = new(this, "Show Unflitered Version of Current Detected Player [Purple]",
                 "This will show a rectangle on the player that the AI is considering on the screen at a given moment without considering the adjusted X and Y axis.");
             Show_UnfilteredDetectedPlayer.Reader.Name = "ShowUnfilteredDetectedPlayer";
             SetupToggle(Show_UnfilteredDetectedPlayer, state => Bools.ShowUnfilteredDetectedPlayer = state, Bools.ShowUnfilteredDetectedPlayer);
-            AimScroller.Children.Add(Show_UnfilteredDetectedPlayer);
+            rightPanel2.Children.Add(Show_UnfilteredDetectedPlayer);
 
             AToggle Show_Prediction = new(this, "Show AI Prediction [Green]",
                 "This will show a rectangle on where the AI assumes the player will be on the screen at a given moment.");
             Show_Prediction.Reader.Name = "ShowAIPrediction";
             SetupToggle(Show_Prediction, state => Bools.ShowPrediction = state, Bools.ShowPrediction);
-            AimScroller.Children.Add(Show_Prediction);
+            rightPanel2.Children.Add(Show_Prediction);
 
             #endregion Visual Debugging
 
             #region Visual Debugging Customizer
 
-            AimScroller.Children.Add(new ALabel("Visual Debugging Customization"));
+            SectionPanel rightPanel3 = new SectionPanel();
+
+            rightPanel3.Children.Add(new ALabel("Visual Debugging Customization"));
 
             ASlider Change_PDW_Size = new(this, "Detection Window Size", "Size",
                 "This setting controls the size of your Detected Player Windows.",
@@ -933,7 +941,7 @@ namespace AimmyWPF
                 AwfulPropertyChanger.PostPDWSize(PDWSize);
             };
 
-            AimScroller.Children.Add(Change_PDW_Size);
+            rightPanel3.Children.Add(Change_PDW_Size);
 
             ASlider Change_PDW_CornerRadius = new(this, "Detection Window Corner Radius", "Corner Radius",
                 "This setting controls the corner radius of your Detected Player Windows.",
@@ -950,7 +958,7 @@ namespace AimmyWPF
                 AwfulPropertyChanger.PostPDWCornerRadius(CornerRadiusSize);
             };
 
-            AimScroller.Children.Add(Change_PDW_CornerRadius);
+            rightPanel3.Children.Add(Change_PDW_CornerRadius);
 
             ASlider Change_PDW_BorderThickness = new(this, "Detection Window Border Thickness", "Border Thickness",
                 "This setting controls the Border Thickness of your Detected Player Windows.",
@@ -967,7 +975,7 @@ namespace AimmyWPF
                 AwfulPropertyChanger.PostPDWBorderThickness(BorderThicknessSize);
             };
 
-            AimScroller.Children.Add(Change_PDW_BorderThickness);
+            rightPanel3.Children.Add(Change_PDW_BorderThickness);
 
             ASlider Change_PDW_Opacity = new(this, "Detection Window Opacity", "Opacity",
                 "This setting controls the Opacity of your Detected Player Windows.",
@@ -984,18 +992,43 @@ namespace AimmyWPF
                 AwfulPropertyChanger.PostPDWOpacity(WindowOpacity);
             };
 
-            AimScroller.Children.Add(Change_PDW_Opacity);
+            rightPanel3.Children.Add(Change_PDW_Opacity);
 
             #endregion Visual Debugging Customizer
+
+            // Set leftPanel to column 0
+            leftPanel.VerticalAlignment = VerticalAlignment.Top;
+            Grid.SetColumn(leftPanel, 0);
+            AimScroller.Children.Add(leftPanel);
+
+            // Create a StackPanel to hold both rightPanel and rightPanel2 vertically
+            StackPanel rightPanelsStack = new StackPanel();
+
+            // Add rightPanel to the StackPanel
+            rightPanelsStack.Children.Add(rightPanel);
+
+            // Add rightPanel2 to the StackPanel
+            rightPanelsStack.Children.Add(rightPanel2);
+
+            // Add rightPanel2 to the StackPanel
+            rightPanelsStack.Children.Add(rightPanel3);
+
+            // Set the StackPanel to column 1
+            Grid.SetColumn(rightPanelsStack, 2);
+            AimScroller.Children.Add(rightPanelsStack);
+
         }
 
         private void LoadMiscMenu()
         {
+            SectionPanel leftPanel = new SectionPanel();
+            SectionPanel RightPanel = new SectionPanel();
+
             AToggle Enable_TriggerBot = new(this, "Enable Auto Trigger",
                 "This will enable the AI's ability to shoot whenever it sees a target.");
             Enable_TriggerBot.Reader.Name = "TriggerBot";
             SetupToggle(Enable_TriggerBot, state => Bools.Triggerbot = state, Bools.Triggerbot);
-            MiscScroller.Children.Add(Enable_TriggerBot);
+            leftPanel.Children.Add(Enable_TriggerBot);
 
             ASlider TriggerBot_Delay = new(this, "Auto Trigger Delay", "Seconds",
                 "This slider will control how many miliseconds it will take to initiate a trigger.",
@@ -1010,13 +1043,13 @@ namespace AimmyWPF
                 aimmySettings["Trigger_Delay"] = TriggerBot_Delay.Slider.Value;
             };
 
-            MiscScroller.Children.Add(TriggerBot_Delay);
+            leftPanel.Children.Add(TriggerBot_Delay);
 
             AToggle RecoilState = new(this, "Anti Recoil",
 "This will counter recoil.");
             RecoilState.Reader.Name = "RecoilToggle";
             SetupToggle(RecoilState, state => Bools.Recoil = state, Bools.Recoil);
-            MiscScroller.Children.Add(RecoilState);
+            RightPanel.Children.Add(RecoilState);
 
             ASlider RecoilStrength = new(this, "Anti Recoil Strength", "Anti Recoil Strength",
             "This setting controls the strength of the anti recoil.",
@@ -1032,7 +1065,15 @@ namespace AimmyWPF
                 aimmySettings["RecoilStrength"] = method;
             };
 
-            MiscScroller.Children.Add(RecoilStrength);
+            RightPanel.Children.Add(RecoilStrength);
+
+            leftPanel.VerticalAlignment = VerticalAlignment.Top;
+            Grid.SetColumn(leftPanel, 0);
+            MiscScroller.Children.Add(leftPanel);
+
+            RightPanel.VerticalAlignment = VerticalAlignment.Top;
+            Grid.SetColumn(RightPanel, 2);
+            MiscScroller.Children.Add(RightPanel);
         }
 
         private void FileWatcher_Reload(object sender, FileSystemEventArgs e)
@@ -1296,6 +1337,8 @@ namespace AimmyWPF
 
         private void LoadSettingsMenu()
         {
+            SectionPanel aimingConfigurationPanel = new SectionPanel();
+
             SettingsScroller.Children.Add(new AInfoSection());
 
             AButton SaveConfigSystem = new(this, "Save Current Config",
@@ -1306,13 +1349,13 @@ namespace AimmyWPF
                 new SecondaryWindows.ConfigSaver(aimmySettings, lastLoadedModel).ShowDialog();
             };
 
-            SettingsScroller.Children.Add(SaveConfigSystem);
+            aimingConfigurationPanel.Children.Add(SaveConfigSystem);
 
             AToggle CollectDataWhilePlaying = new(this, "Collect Data While Playing",
                 "This will enable the AI's ability to take a picture of your screen when the trigger key is pressed.");
             CollectDataWhilePlaying.Reader.Name = "CollectData";
             SetupToggle(CollectDataWhilePlaying, state => Bools.CollectDataWhilePlaying = state, Bools.CollectDataWhilePlaying);
-            SettingsScroller.Children.Add(CollectDataWhilePlaying);
+            aimingConfigurationPanel.Children.Add(CollectDataWhilePlaying);
 
 
             ASlider AIMinimumConfidence = new(this, "AI Minimum Confidence", "% Confidence",
@@ -1342,7 +1385,7 @@ namespace AimmyWPF
                 }
             };
 
-            SettingsScroller.Children.Add(AIMinimumConfidence);
+            aimingConfigurationPanel.Children.Add(AIMinimumConfidence);
 
             bool topMostInitialState = toggleState.ContainsKey("TopMost") ? toggleState["TopMost"] : false;
 
@@ -1351,7 +1394,8 @@ namespace AimmyWPF
             TopMost.Reader.Name = "TopMost";
             SetupToggle(TopMost, state => Bools.TopMost = state, topMostInitialState);
 
-            SettingsScroller.Children.Add(TopMost);
+            aimingConfigurationPanel.Children.Add(TopMost);
+            SettingsScroller.Children.Add(aimingConfigurationPanel);
         }
 
         #region Window Controls

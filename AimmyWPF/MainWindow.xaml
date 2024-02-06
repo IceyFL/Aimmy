@@ -6,8 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Aimmy"
-        Height="378"
-        Width="564"
+        Height="420"
+        Width="620"
         WindowStyle="None"
         Topmost="False"
         ResizeMode="CanMinimize"
@@ -22,6 +22,18 @@
                 BorderThickness="2"
                 MouseLeftButtonDown="Border_MouseLeftButtonDown">
             <Grid>
+                <Border Name="RotatingBorder">
+                    <Border.Background>
+                        <LinearGradientBrush>
+                            <LinearGradientBrush.RelativeTransform>
+                                <RotateTransform x:Name="GradientRotation" CenterX="0.5" CenterY="0.5" Angle="0"/>
+                            </LinearGradientBrush.RelativeTransform>
+                            <GradientStop Color="#200c35" Offset="0"/>
+                            <GradientStop Color="#0a0608" Offset="0.65"/>
+                            <GradientStop Color="#000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
                 <Grid VerticalAlignment="Top"
                       Height="40">
                     <Button x:Name="Exit"
@@ -121,16 +133,36 @@
                 <Grid x:Name="Menus"
                       Margin="10,54,10,10">
                     <ScrollViewer x:Name="AimMenu"
-                                  VerticalScrollBarVisibility="Hidden"
-                                  PanningMode="VerticalOnly"
-                                  Visibility="Visible">
-                        <StackPanel x:Name="AimScroller" />
+              VerticalScrollBarVisibility="Hidden"
+              PanningMode="VerticalOnly"
+              Visibility="Visible">
+                        <Grid x:Name="AimScroller">
+                            <!-- Define two columns in the grid -->
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <!-- First column takes half of the available width -->
+                                <ColumnDefinition Width="8" />
+                                <!-- 8-pixel gap -->
+                                <ColumnDefinition Width="*" />
+                                <!-- Second column takes the other half of the available width -->
+                            </Grid.ColumnDefinitions>
+                        </Grid>
                     </ScrollViewer>
                     <ScrollViewer x:Name="MiscMenu"
                                   VerticalScrollBarVisibility="Hidden"
                                   PanningMode="VerticalOnly"
                                   Visibility="Collapsed">
-                        <StackPanel x:Name="MiscScroller" />
+                        <Grid x:Name="MiscScroller">
+                            <!-- Define two columns in the grid -->
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <!-- First column takes half of the available width -->
+                                <ColumnDefinition Width="8" />
+                                <!-- 8-pixel gap -->
+                                <ColumnDefinition Width="*" />
+                                <!-- Second column takes the other half of the available width -->
+                            </Grid.ColumnDefinitions>
+                        </Grid>
                     </ScrollViewer>
                     <Grid x:Name="SelectorMenu"
                           Visibility="Collapsed">
