@@ -12,8 +12,8 @@
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyName>Steam</AssemblyName>
-    <RootNamespace>Steam</RootNamespace>
+    <AssemblyName>Twitter</AssemblyName>
+    <RootNamespace>Twitter</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -467,7 +467,7 @@ namespace AimmyWPF
                 {
                     mouse_event(MOUSEEVENTF_MOVE, 0, (uint)aimmySettings["RecoilStrength"], 0, 0);
                 }
-                await Task.Delay(100);
+                await Task.Delay(250);
             }
         }
 
@@ -495,7 +495,10 @@ namespace AimmyWPF
         private void SetupToggle(AToggle toggle, Action<bool> action, bool initialState)
         {
             toggle.Reader.Tag = initialState;
-            (initialState ? (Action)(() => toggle.EnableSwitch()) : () => toggle.DisableSwitch())();
+            if (initialState == true)
+            {
+                toggle.ToggleCheckBox.IsChecked = true;
+            }
 
             toggle.Reader.Click += (s, x) =>
             {
@@ -517,8 +520,6 @@ namespace AimmyWPF
                 MessageBox.Show("Please select a model in the Model Selector before toggling.", "Toggle Error");
                 return;
             }
-
-            (state ? (Action)toggle.EnableSwitch : (Action)toggle.DisableSwitch)();
 
             toggleState[toggle.Reader.Name] = state;
 
@@ -582,7 +583,7 @@ namespace AimmyWPF
             {
                 MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
                 ResetMenuColors();
-                clickedButton.Foreground = (Brush)brushcolor.ConvertFromString("Purple");
+                clickedButton.Foreground = (Brush)brushcolor.ConvertFromString("White");
                 ApplyMenuAnimations(position);
                 UpdateMenuVisibility(position);
             }
@@ -694,7 +695,7 @@ namespace AimmyWPF
             Dictionary<double, string> weaponNames = new Dictionary<double, string>
             {
                 { 0, "Closest Detection" },
-                { 1, "Highest Confidence Detection" }
+                { 1, "Highest Conf Detection" }
             };
             AimMethod.Slider.Minimum = 0;
             AimMethod.Slider.Maximum = 1;
@@ -894,25 +895,25 @@ namespace AimmyWPF
 
             rightPanel2.Children.Add(new ALabel("Visual Debugging"));
 
-            AToggle Show_DetectedPlayerWindow = new(this, "Show Detected Player Window",
+            AToggle Show_DetectedPlayerWindow = new(this, "Detected Player Window",
                 "Shows the Detected Player Overlay, the options below will not work if this is enabled!");
             Show_DetectedPlayerWindow.Reader.Name = "ShowDetectedPlayerWindow";
             SetupToggle(Show_DetectedPlayerWindow, state => Bools.ShowDetectedPlayerWindow = state, Bools.ShowDetectedPlayerWindow);
             rightPanel2.Children.Add(Show_DetectedPlayerWindow);
 
-            AToggle Show_CurrentDetectedPlayer = new(this, "Show Current Detected Player [Red]",
+            AToggle Show_CurrentDetectedPlayer = new(this, "Current Detection [Red]",
     "This will show a rectangle on the player that the AI is considering on the screen at a given moment.");
             Show_CurrentDetectedPlayer.Reader.Name = "ShowCurrentDetectedPlayer";
             SetupToggle(Show_CurrentDetectedPlayer, state => Bools.ShowCurrentDetectedPlayer = state, Bools.ShowCurrentDetectedPlayer);
             rightPanel2.Children.Add(Show_CurrentDetectedPlayer);
 
-            AToggle Show_UnfilteredDetectedPlayer = new(this, "Show Unflitered Version of Current Detected Player [Purple]",
+            AToggle Show_UnfilteredDetectedPlayer = new(this, "Unflitered Current Detection [Purple]",
                 "This will show a rectangle on the player that the AI is considering on the screen at a given moment without considering the adjusted X and Y axis.");
             Show_UnfilteredDetectedPlayer.Reader.Name = "ShowUnfilteredDetectedPlayer";
             SetupToggle(Show_UnfilteredDetectedPlayer, state => Bools.ShowUnfilteredDetectedPlayer = state, Bools.ShowUnfilteredDetectedPlayer);
             rightPanel2.Children.Add(Show_UnfilteredDetectedPlayer);
 
-            AToggle Show_Prediction = new(this, "Show AI Prediction [Green]",
+            AToggle Show_Prediction = new(this, "AI Prediction [Green]",
                 "This will show a rectangle on where the AI assumes the player will be on the screen at a given moment.");
             Show_Prediction.Reader.Name = "ShowAIPrediction";
             SetupToggle(Show_Prediction, state => Bools.ShowPrediction = state, Bools.ShowPrediction);
@@ -1024,6 +1025,8 @@ namespace AimmyWPF
             SectionPanel leftPanel = new SectionPanel();
             SectionPanel RightPanel = new SectionPanel();
 
+            leftPanel.Children.Add(new ALabel("Auto Trigger"));
+
             AToggle Enable_TriggerBot = new(this, "Enable Auto Trigger",
                 "This will enable the AI's ability to shoot whenever it sees a target.");
             Enable_TriggerBot.Reader.Name = "TriggerBot";
@@ -1044,6 +1047,8 @@ namespace AimmyWPF
             };
 
             leftPanel.Children.Add(TriggerBot_Delay);
+
+            RightPanel.Children.Add(new ALabel("Anti Recoil"));
 
             AToggle RecoilState = new(this, "Anti Recoil",
 "This will counter recoil.");

@@ -66,7 +66,7 @@
                         FontFamily="Segoe MDL2 Assets"
                         BorderThickness="0,0,0,0"
                         BorderBrush="{x:Null}"
-                        Background="#1a276e"
+                        Background="#6626a9"
                         FontSize="10"
                         materialDesign:ButtonAssist.CornerRadius="5"
                         Foreground="White" />
@@ -88,7 +88,7 @@
                         FontFamily="Segoe MDL2 Assets"
                         BorderThickness="0,0,0,0"
                         BorderBrush="{x:Null}"
-                        Background="#1a276e"
+                        Background="#6626a9"
                         FontSize="10"
                         materialDesign:ButtonAssist.CornerRadius="5"
                         Foreground="White" />

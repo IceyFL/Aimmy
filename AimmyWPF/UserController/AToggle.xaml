@@ -6,43 +6,75 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="40"
-             d:DesignWidth="280"
+             d:DesignWidth="335"
              Height="40">
     <UserControl.Resources>
-        <Storyboard x:Key="EnableSwitch">
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="border">
-                <EasingColorKeyFrame KeyTime="0:0:1.5" Value="#1a276e">
-                    <EasingColorKeyFrame.EasingFunction>
-                        <QuinticEase EasingMode="EaseOut" />
-                    </EasingColorKeyFrame.EasingFunction>
-                </EasingColorKeyFrame>
-            </ColorAnimationUsingKeyFrames>
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="border">
-                <EasingColorKeyFrame KeyTime="0:0:1.5" Value="#1a276e">
-                    <EasingColorKeyFrame.EasingFunction>
-                        <QuinticEase EasingMode="EaseOut" />
-                    </EasingColorKeyFrame.EasingFunction>
-                </EasingColorKeyFrame>
-            </ColorAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.RelativeTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="border">
-                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="180">
-                    <EasingDoubleKeyFrame.EasingFunction>
-                        <QuinticEase EasingMode="EaseOut" />
-                    </EasingDoubleKeyFrame.EasingFunction>
-                </EasingDoubleKeyFrame>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-        <Storyboard x:Key="DisableSwitch">
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="border">
-                <SplineColorKeyFrame KeyTime="0:0:1.5" Value="#451c5c" />
-            </ColorAnimationUsingKeyFrames>
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="border">
-                <SplineColorKeyFrame KeyTime="0:0:1.5" Value="#451c5c" />
-            </ColorAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.RelativeTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="border">
-                <SplineDoubleKeyFrame KeyTime="0:0:1.5" Value="0" />
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
+        <!-- CheckBox style -->
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Grid Background="Transparent" SnapsToDevicePixels="True" Height="18">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid x:Name="markGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Fill="Transparent" Height="16" x:Name="moveEllipse">
+                                    <Rectangle.Style>
+                                        <Style TargetType="Rectangle">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation From="0" To="16" Duration="0:0:0.4" Storyboard.TargetProperty="Width" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation To="0" Duration="0:0:0.4" Storyboard.TargetProperty="Width"/>
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Rectangle.Style>
+                                </Rectangle>
+                                <Rectangle RadiusX="5" RadiusY="5" Grid.ColumnSpan="2" Name="line" StrokeThickness=".8" IsHitTestVisible="False" Margin="0,0,0,0">
+                                    <Rectangle.Style>
+                                        <Style TargetType="{x:Type Rectangle}">
+                                            <Setter Property="Fill" Value="Transparent"/>
+                                        </Style>
+                                    </Rectangle.Style>
+                                </Rectangle>
+                                <Border Grid.ColumnSpan="2" BorderBrush="#6626a9" BorderThickness="2" CornerRadius="8" />
+                                <Ellipse Height="13" Width="13" StrokeThickness=".8" Name="spot" Grid.Column="1" HorizontalAlignment="Left" Margin="2.5,0,0,0">
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse">
+                                            <Setter Property="Fill" Value="White"/>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                            </Grid>
+                            <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="1" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Fill" TargetName="spot" Value="#6626a9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Border Background="#00191919"
@@ -59,40 +91,19 @@
                        Padding="10,0,0,0"
                        FontSize="13"
                        Margin="0,0,47,0" />
-                <Border x:Name="border"
-                        HorizontalAlignment="Right"
-                        Margin="10,7.5,40,7.5"
-                        CornerRadius="5"
-                        Width="16">
-                    <Border.Background>
-                        <LinearGradientBrush EndPoint="0.5,1"
-                                             StartPoint="0.5,0">
-                            <LinearGradientBrush.RelativeTransform>
-                                <TransformGroup>
-                                    <ScaleTransform CenterY="0.5"
-                                                    CenterX="0.5" />
-                                    <SkewTransform CenterY="0.5"
-                                                   CenterX="0.5" />
-                                    <RotateTransform CenterY="0.5"
-                                                     CenterX="0.5" />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </LinearGradientBrush.RelativeTransform>
-                            <GradientStop x:Name="GG1"
-                                          Color="#451c5c" />
-                            <GradientStop x:Name="GG2"
-                                          Color="#451c5c"
-                                          Offset="1" />
-                        </LinearGradientBrush>
-                    </Border.Background>
-                </Border>
+                <CheckBox x:Name="ToggleCheckBox" Content="" 
+                          Foreground="White" 
+                          FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
+                          VerticalContentAlignment="Center" Padding="10,0,0,0"
+                          FontSize="13" Margin="230,0,45,0" />
                 <Button x:Name="Reader"
                         Height="Auto"
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
                         Foreground="{x:Null}"
                         Margin="0,2,35,2"
-                        materialDesign:RippleAssist.IsDisabled="True" />
+                        materialDesign:RippleAssist.IsDisabled="True"
+                        Click="Reader_Click" />
                 <Button x:Name="QuestionButton"
                         Content="&#xE897;"
                         HorizontalAlignment="Right"

@@ -1,5 +1,5 @@
-﻿using System.Windows.Controls;
-using System.Windows.Media.Animation;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace AimmyWPF.UserController
 {
@@ -23,18 +23,12 @@ namespace AimmyWPF.UserController
             };
         }
 
+        private void Reader_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle the IsChecked property of the CheckBox
+            ToggleCheckBox.IsChecked = !ToggleCheckBox.IsChecked;
+        }
+
         // Reference: https://stackoverflow.com/questions/34815532/start-storyboard-from-c-sharp-code
-
-        public void EnableSwitch()
-        {
-            Storyboard Animation = (Storyboard)TryFindResource("EnableSwitch");
-            Animation.Begin();
-        }
-
-        public void DisableSwitch()
-        {
-            Storyboard Animation = (Storyboard)TryFindResource("DisableSwitch");
-            Animation.Begin();
-        }
     }
 }
