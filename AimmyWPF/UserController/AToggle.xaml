@@ -11,14 +11,14 @@
     <UserControl.Resources>
         <Storyboard x:Key="EnableSwitch">
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="border">
-                <EasingColorKeyFrame KeyTime="0:0:1.5" Value="Cyan">
+                <EasingColorKeyFrame KeyTime="0:0:1.5" Value="#1a276e">
                     <EasingColorKeyFrame.EasingFunction>
                         <QuinticEase EasingMode="EaseOut" />
                     </EasingColorKeyFrame.EasingFunction>
                 </EasingColorKeyFrame>
             </ColorAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="border">
-                <EasingColorKeyFrame KeyTime="0:0:1.5" Value="Cyan">
+                <EasingColorKeyFrame KeyTime="0:0:1.5" Value="#1a276e">
                     <EasingColorKeyFrame.EasingFunction>
                         <QuinticEase EasingMode="EaseOut" />
                     </EasingColorKeyFrame.EasingFunction>
@@ -34,10 +34,10 @@
         </Storyboard>
         <Storyboard x:Key="DisableSwitch">
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="border">
-                <SplineColorKeyFrame KeyTime="0:0:1.5" Value="#0c164f" />
+                <SplineColorKeyFrame KeyTime="0:0:1.5" Value="#451c5c" />
             </ColorAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="border">
-                <SplineColorKeyFrame KeyTime="0:0:1.5" Value="#0c164f" />
+                <SplineColorKeyFrame KeyTime="0:0:1.5" Value="#451c5c" />
             </ColorAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(Brush.RelativeTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="border">
                 <SplineDoubleKeyFrame KeyTime="0:0:1.5" Value="0" />
@@ -79,9 +79,9 @@
                                 </TransformGroup>
                             </LinearGradientBrush.RelativeTransform>
                             <GradientStop x:Name="GG1"
-                                          Color="#0c164f" />
+                                          Color="#451c5c" />
                             <GradientStop x:Name="GG2"
-                                          Color="#0c164f"
+                                          Color="#451c5c"
                                           Offset="1" />
                         </LinearGradientBrush>
                     </Border.Background>

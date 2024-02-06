@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;    
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -326,7 +326,7 @@ namespace AimmyWPF
 
         public async Task ModelCapture(bool TriggerOnly = false)
         {
-            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync((int)aimmySettings["AimMethod"]);
+            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync(aimmySettings["AimMethod"]);
             if (closestPrediction == null)
             {
                 return;
@@ -344,6 +344,7 @@ namespace AimmyWPF
             double XOffset = aimmySettings["X_Offset"];
             int detectedX = (int)((closestPrediction.Rectangle.X + closestPrediction.Rectangle.Width / 2) * scaleX + XOffset);
             int detectedY = (int)((closestPrediction.Rectangle.Y + closestPrediction.Rectangle.Height / 2) * scaleY + YOffset);
+
             Console.WriteLine(AIModel.AIConfidence.ToString());
 
             // Handle Prediction
@@ -360,9 +361,7 @@ namespace AimmyWPF
                 var predictedPosition = predictionManager.GetEstimatedPosition();
 
                 if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
-                {
                     MoveCrosshair(predictedPosition.X, predictedPosition.Y);
-                }
                 //MoveCrosshair(predictedPosition.X, predictedPosition.Y);
 
                 if (Bools.ShowDetectedPlayerWindow && Bools.ShowPrediction)
@@ -379,9 +378,7 @@ namespace AimmyWPF
             else
             {
                 if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
-                {
                     MoveCrosshair(detectedX, detectedY);
-                }
             }
 
             if (Bools.ShowDetectedPlayerWindow)
@@ -466,10 +463,11 @@ namespace AimmyWPF
 
             while (!cts.Token.IsCancellationRequested)
             {
-                if (Bools.Recoil && IsHolding_Right && IsHolding_Left){
-                    mouse_event(MOUSEEVENTF_MOVE, (uint)0, (uint)aimmySettings["RecoilStrength"], 0, 0);
+                if (Bools.Recoil && IsHolding_Right && IsHolding_Left)
+                {
+                    mouse_event(MOUSEEVENTF_MOVE, 0, (uint)aimmySettings["RecoilStrength"], 0, 0);
                 }
-                await Task.Delay(250);
+                await Task.Delay(100);
             }
         }
 
@@ -580,11 +578,11 @@ namespace AimmyWPF
 
         private async void Selection_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is System.Windows.Controls.Button clickedButton)
+            if (sender is Button clickedButton)
             {
                 MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
                 ResetMenuColors();
-                clickedButton.Foreground = (Brush)brushcolor.ConvertFromString("#3e8fb0");
+                clickedButton.Foreground = (Brush)brushcolor.ConvertFromString("Purple");
                 ApplyMenuAnimations(position);
                 UpdateMenuVisibility(position);
             }
@@ -592,7 +590,7 @@ namespace AimmyWPF
 
         private void ResetMenuColors()
         {
-            Selection1.Foreground = Selection2.Foreground = Selection3.Foreground = Selection4.Foreground = 
+            Selection1.Foreground = Selection2.Foreground = Selection3.Foreground = Selection4.Foreground =
                 (Brush)brushcolor.ConvertFromString("#ffffff");
         }
 
@@ -668,8 +666,11 @@ namespace AimmyWPF
         }
 
         #endregion More Info Function
-            private void LoadAimMenu()
+        private void LoadAimMenu()
         {
+
+            AimScroller.Children.Add(new ALabel("Aiming Configuration"));
+
             AToggle Enable_AIAimAligner = new(this, "Enable AI Aim Aligner",
                 "This will enable the AI's ability to align the aim.");
             Enable_AIAimAligner.Reader.Name = "AimbotToggle";
@@ -753,70 +754,10 @@ namespace AimmyWPF
             SetupToggle(Enable_AIPredictions, state => Bools.AIPredictions = state, Bools.AIPredictions);
             AimScroller.Children.Add(Enable_AIPredictions);
 
-            #region FOV System
-
-            AimScroller.Children.Add(new ALabel("FOV System"));
-
-            AToggle Show_FOV = new(this, "Show FOV",
-                "This will show a circle around your screen that show what the AI is considering on the screen at a given moment.");
-            Show_FOV.Reader.Name = "ShowFOV";
-            SetupToggle(Show_FOV, state => Bools.ShowFOV = state, Bools.ShowFOV);
-            AimScroller.Children.Add(Show_FOV);
-
-            AToggle Travelling_FOV = new(this, "Travelling FOV",
-    "This will allow the FOV circle to travel alongside your mouse.\n" +
-    "[PLEASE NOTE]: This does not have any effect on the AI's personal FOV, this feature is only for the visual effect.");
-            Travelling_FOV.Reader.Name = "TravellingFOV";
-            SetupToggle(Travelling_FOV, state => Bools.TravellingFOV = state, Bools.TravellingFOV);
-            AimScroller.Children.Add(Travelling_FOV);
-
-            AColorChanger Change_FOVColor = new("FOV Color");
-            Change_FOVColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString(OverlayProperties["FOV_Color"]);
-            Change_FOVColor.Reader.Click += (s, x) =>
-            {
-                System.Windows.Forms.ColorDialog colorDialog = new();
-                if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    Change_FOVColor.ColorChangingBorder.Background = new SolidColorBrush(Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
-                    OverlayProperties["FOV_Color"] = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B).ToString();
-                    AwfulPropertyChanger.PostColor(Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
-                }
-            };
-            AimScroller.Children.Add(Change_FOVColor);
-
-            ASlider FovSlider = new(this, "FOV Size", "Size of FOV",
-                "This setting controls how much of your screen is considered in the AI's decision making and how big the circle on your screen will be.",
-                1);
-
-            FovSlider.Slider.Minimum = 10;
-            FovSlider.Slider.Maximum = 640;
-            FovSlider.Slider.Value = aimmySettings["FOV_Size"];
-            FovSlider.Slider.TickFrequency = 1;
-            FovSlider.Slider.ValueChanged += (s, x) =>
-            {
-                double FovSize = FovSlider.Slider.Value;
-                aimmySettings["FOV_Size"] = FovSize;
-                if (_onnxModel != null)
-                {
-                    _onnxModel.FovSize = (int)FovSize;
-                }
-
-                FOVOverlay.FovSize = (int)FovSize;
-                AwfulPropertyChanger.PostNewFOVSize();
-            };
-
-            AimScroller.Children.Add(FovSlider);
-
-            #endregion FOV System
-
-            #region Aiming Configuration
-
-            AimScroller.Children.Add(new ALabel("Aiming Configuration"));
-
             ASlider MouseSensitivtyX = new ASlider(this, "Mouse Sensitivty X", "Sensitivty",
-                "This setting controls how fast your mouse moves to a detection, if it moves too fast you need to set it to a higher number.",
-                0.01);
-            
+    "This setting controls how fast your mouse moves to a detection, if it moves too fast you need to set it to a higher number.",
+    0.01);
+
             MouseSensitivtyX.Slider.Minimum = 0.01;
             MouseSensitivtyX.Slider.Maximum = 1;
             MouseSensitivtyX.Slider.Value = aimmySettings["Mouse_Sens"];
@@ -887,7 +828,61 @@ namespace AimmyWPF
 
             AimScroller.Children.Add(XOffset);
 
-            #endregion Aiming Configuration
+            #region FOV System
+
+            AimScroller.Children.Add(new ALabel("FOV System"));
+
+            AToggle Show_FOV = new(this, "Show FOV",
+                "This will show a circle around your screen that show what the AI is considering on the screen at a given moment.");
+            Show_FOV.Reader.Name = "ShowFOV";
+            SetupToggle(Show_FOV, state => Bools.ShowFOV = state, Bools.ShowFOV);
+            AimScroller.Children.Add(Show_FOV);
+
+            AToggle Travelling_FOV = new(this, "Travelling FOV",
+    "This will allow the FOV circle to travel alongside your mouse.\n" +
+    "[PLEASE NOTE]: This does not have any effect on the AI's personal FOV, this feature is only for the visual effect.");
+            Travelling_FOV.Reader.Name = "TravellingFOV";
+            SetupToggle(Travelling_FOV, state => Bools.TravellingFOV = state, Bools.TravellingFOV);
+            AimScroller.Children.Add(Travelling_FOV);
+
+            AColorChanger Change_FOVColor = new("FOV Color");
+            Change_FOVColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString(OverlayProperties["FOV_Color"]);
+            Change_FOVColor.Reader.Click += (s, x) =>
+            {
+                System.Windows.Forms.ColorDialog colorDialog = new();
+                if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    Change_FOVColor.ColorChangingBorder.Background = new SolidColorBrush(Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
+                    OverlayProperties["FOV_Color"] = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B).ToString();
+                    AwfulPropertyChanger.PostColor(Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
+                }
+            };
+            AimScroller.Children.Add(Change_FOVColor);
+
+            ASlider FovSlider = new(this, "FOV Size", "Size of FOV",
+                "This setting controls how much of your screen is considered in the AI's decision making and how big the circle on your screen will be.",
+                1);
+
+            FovSlider.Slider.Minimum = 10;
+            FovSlider.Slider.Maximum = 640;
+            FovSlider.Slider.Value = aimmySettings["FOV_Size"];
+            FovSlider.Slider.TickFrequency = 1;
+            FovSlider.Slider.ValueChanged += (s, x) =>
+            {
+                double FovSize = FovSlider.Slider.Value;
+                aimmySettings["FOV_Size"] = FovSize;
+                if (_onnxModel != null)
+                {
+                    _onnxModel.FovSize = (int)FovSize;
+                }
+
+                FOVOverlay.FovSize = (int)FovSize;
+                AwfulPropertyChanger.PostNewFOVSize();
+            };
+
+            AimScroller.Children.Add(FovSlider);
+
+            #endregion FOV System
 
             #region Visual Debugging
 
@@ -1303,11 +1298,22 @@ namespace AimmyWPF
         {
             SettingsScroller.Children.Add(new AInfoSection());
 
+            AButton SaveConfigSystem = new(this, "Save Current Config",
+"This will save the current config for the purposes of publishing.");
+
+            SaveConfigSystem.Reader.Click += (s, e) =>
+            {
+                new SecondaryWindows.ConfigSaver(aimmySettings, lastLoadedModel).ShowDialog();
+            };
+
+            SettingsScroller.Children.Add(SaveConfigSystem);
+
             AToggle CollectDataWhilePlaying = new(this, "Collect Data While Playing",
                 "This will enable the AI's ability to take a picture of your screen when the trigger key is pressed.");
             CollectDataWhilePlaying.Reader.Name = "CollectData";
             SetupToggle(CollectDataWhilePlaying, state => Bools.CollectDataWhilePlaying = state, Bools.CollectDataWhilePlaying);
             SettingsScroller.Children.Add(CollectDataWhilePlaying);
+
 
             ASlider AIMinimumConfidence = new(this, "AI Minimum Confidence", "% Confidence",
                 "This setting controls how confident the AI needs to be before making the decision to aim.",
@@ -1346,16 +1352,6 @@ namespace AimmyWPF
             SetupToggle(TopMost, state => Bools.TopMost = state, topMostInitialState);
 
             SettingsScroller.Children.Add(TopMost);
-
-            AButton SaveConfigSystem = new(this, "Save Current Config",
-   "This will save the current config for the purposes of publishing.");
-
-            SaveConfigSystem.Reader.Click += (s, e) =>
-            {
-                new SecondaryWindows.ConfigSaver(aimmySettings, lastLoadedModel).ShowDialog();
-            };
-
-            SettingsScroller.Children.Add(SaveConfigSystem);
         }
 
         #region Window Controls

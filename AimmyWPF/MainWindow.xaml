@@ -13,7 +13,6 @@
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True"
-        Background="Transparent"
         Closing="Window_Closing"
         Loaded="Window_Loaded">
     <Grid>
@@ -71,7 +70,7 @@
                                     HorizontalAlignment="Left"
                                     Width="110"
                                     materialDesign:RippleAssist.IsDisabled="True"
-                                    Foreground="#FF3E8FB0"
+                                    Foreground="Purple"
                                     Click="Selection_Click"
                                     Tag="AimMenu" />
                             <Button x:Name="Selection2"

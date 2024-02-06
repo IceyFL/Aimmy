@@ -9,7 +9,7 @@
 
     <Grid>
         <Label x:Name="Title"
-               Foreground="Cyan"
+               Foreground="Purple"
                Content="Aim Aligner"
                FontFamily="/Paster2Trappy;component/Fonts/#Atkinson Hyperlegible"
                VerticalContentAlignment="Center"
