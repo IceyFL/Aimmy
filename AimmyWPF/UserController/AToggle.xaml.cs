@@ -16,11 +16,6 @@ namespace AimmyWPF.UserController
             Title.Content = Text;
 
             MainWin = MW;
-
-            QuestionButton.Click += (s, e) =>
-            {
-                MainWin.ActivateMoreInfo(Info);
-            };
         }
 
         private void Reader_Click(object sender, RoutedEventArgs e)

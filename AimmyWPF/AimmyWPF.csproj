@@ -87,11 +87,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="AimMenu.png" />
     <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
+    <None Remove="Images\AimMenu.png" />
+    <None Remove="Images\MiscMenu.png" />
+    <None Remove="Images\SelectorMenu.png" />
+    <None Remove="Images\SettingsMenu.png" />
+    <None Remove="MiscMenu.png" />
+    <None Remove="SelectorMenu.png" />
+    <None Remove="SettingsMenu.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,6 +114,13 @@
 
   <ItemGroup>
     <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\AimMenu.png" />
+    <Resource Include="Images\MiscMenu.png" />
+    <Resource Include="Images\SelectorMenu.png" />
+    <Resource Include="Images\SettingsMenu.png" />
   </ItemGroup>
   
 </Project>

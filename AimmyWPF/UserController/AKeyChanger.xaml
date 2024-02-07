@@ -22,7 +22,7 @@
                        Padding="10,0,0,0"
                        FontSize="13"
                        Margin="0,0,115,0" />
-                <Border Background="#001E1E1E"
+                <Border Background="#1E1E1E"
                         BorderBrush="#1E1E1E"
                         BorderThickness="1"
                         Width="70"

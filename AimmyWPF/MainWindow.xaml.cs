@@ -115,6 +115,7 @@ namespace AimmyWPF
         public MainWindow()
         {
             InitializeComponent();
+            MainBorder.MouseMove += MainBorder_MouseMove;
             this.Title = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
 
             // Check to see if certain items are installed
@@ -509,6 +510,21 @@ namespace AimmyWPF
             };
         }
 
+        private void MainBorder_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            UpdateGradientDirection(e.GetPosition(MainBorder));
+        }
+
+        private void UpdateGradientDirection(Point mousePosition)
+        {
+            double xPercentage = mousePosition.X / MainBorder.ActualWidth;
+            double yPercentage = mousePosition.Y / MainBorder.ActualHeight;
+
+            // Calculate the angle of the gradient based on the mouse position
+            double angle = Math.Atan2(yPercentage - 0.5, xPercentage - 0.5) * (180 / Math.PI);
+
+            GradientRotation.Angle = angle;
+        }
         private void SetToggleState(AToggle toggle)
         {
             bool state = (bool)toggle.Reader.Tag;
@@ -582,17 +598,34 @@ namespace AimmyWPF
             if (sender is Button clickedButton)
             {
                 MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
-                ResetMenuColors();
-                clickedButton.Foreground = (Brush)brushcolor.ConvertFromString("White");
+
                 ApplyMenuAnimations(position);
                 UpdateMenuVisibility(position);
-            }
-        }
 
-        private void ResetMenuColors()
-        {
-            Selection1.Foreground = Selection2.Foreground = Selection3.Foreground = Selection4.Foreground =
-                (Brush)brushcolor.ConvertFromString("#ffffff");
+                Thickness LeftMargin;
+                Thickness RightMargin;
+                switch (clickedButton.Name)
+                {
+                    case "Selection1":
+                        LeftMargin = new Thickness(25, 25, -25, 335);
+                        RightMargin = new Thickness(-25, 25, 25, 335);
+                        break;
+                    case "Selection2":
+                        LeftMargin = new Thickness(25, 90, -25, 300);
+                        RightMargin = new Thickness(-25, 90, 25, 300);
+                        break;
+                    case "Selection3":
+                        LeftMargin = new Thickness(25, 130, -25, 237);
+                        RightMargin = new Thickness(-25, 130, 25, 237);
+                        break;
+                    default:
+                        LeftMargin = new Thickness(25, 175, -25, 180);
+                        RightMargin = new Thickness(-25, 175, 25, 180);
+                        break;
+                }
+                LeftDot.Margin = LeftMargin;
+                RightDot.Margin = RightMargin;
+            }
         }
 
         private void ApplyMenuAnimations(MenuPosition position)
@@ -727,7 +760,7 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(FPS);
 
-            AToggle AimOnlyWhenBindingHeld = new(this, "Aim only when Trigger Button is held", // this can be simplifed with a toggle between constant and hold (toggle/hold), ill do it later.
+            AToggle AimOnlyWhenBindingHeld = new(this, "Aim only when Trigger Button held", // this can be simplifed with a toggle between constant and hold (toggle/hold), ill do it later.
 "This will stop the AI from aiming unless the Trigger Button is held.");
             AimOnlyWhenBindingHeld.Reader.Name = "AimOnlyWhenBindingHeld";
             SetupToggle(AimOnlyWhenBindingHeld, state => Bools.AimOnlyWhenBindingHeld = state, Bools.AimOnlyWhenBindingHeld);

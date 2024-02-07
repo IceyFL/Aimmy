@@ -28,11 +28,6 @@ namespace AimmyWPF.UserController
             SubtractOne.Click += (s, e) => Slider.Value = Slider.Value - ButtonSteps;
             AddOne.Click += (s, e) => Slider.Value = Slider.Value + ButtonSteps;
 
-            QuestionButton.Click += (s, e) =>
-            {
-                MainWin.ActivateMoreInfo(Info);
-            };
-
             MainWin = MW;
         }
     }

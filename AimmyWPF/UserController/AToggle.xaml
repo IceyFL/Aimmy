@@ -48,14 +48,14 @@
                                         </Style>
                                     </Rectangle.Style>
                                 </Rectangle>
-                                <Rectangle RadiusX="5" RadiusY="5" Grid.ColumnSpan="2" Name="line" StrokeThickness=".8" IsHitTestVisible="False" Margin="0,0,0,0">
+                                <Rectangle RadiusX="9" RadiusY="9" Grid.ColumnSpan="2" Name="line" StrokeThickness=".8" IsHitTestVisible="False" Margin="0,0,0,0">
                                     <Rectangle.Style>
                                         <Style TargetType="{x:Type Rectangle}">
-                                            <Setter Property="Fill" Value="Transparent"/>
+                                            <Setter Property="Fill" Value="#FF191919"/>
                                         </Style>
                                     </Rectangle.Style>
                                 </Rectangle>
-                                <Border Grid.ColumnSpan="2" BorderBrush="#6626a9" BorderThickness="2" CornerRadius="8" />
+                                <Border Grid.ColumnSpan="2" BorderBrush="#712fc6" BorderThickness="2" CornerRadius="8" />
                                 <Ellipse Height="13" Width="13" StrokeThickness=".8" Name="spot" Grid.Column="1" HorizontalAlignment="Left" Margin="2.5,0,0,0">
                                     <Ellipse.Style>
                                         <Style TargetType="Ellipse">
@@ -68,7 +68,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Fill" TargetName="spot" Value="#6626a9"/>
+                                <Setter Property="Fill" TargetName="spot" Value="#712fc6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -95,30 +95,15 @@
                           Foreground="White" 
                           FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
                           VerticalContentAlignment="Center" Padding="10,0,0,0"
-                          FontSize="13" Margin="230,0,45,0" />
+                          FontSize="13" Margin="220,0,25,0" />
                 <Button x:Name="Reader"
                         Height="Auto"
                         Background="{x:Null}"
                         BorderBrush="{x:Null}"
                         Foreground="{x:Null}"
-                        Margin="0,2,35,2"
+                        Margin="0,2,0,-3"
                         materialDesign:RippleAssist.IsDisabled="True"
                         Click="Reader_Click" />
-                <Button x:Name="QuestionButton"
-                        Content="&#xE897;"
-                        HorizontalAlignment="Right"
-                        Height="20"
-                        Margin="0,0,10,0"
-                        VerticalAlignment="Center"
-                        Width="20"
-                        Padding="0,0,0,0"
-                        FontFamily="Segoe MDL2 Assets"
-                        BorderThickness="0,0,0,0"
-                        BorderBrush="{x:Null}"
-                        Background="#FF323232"
-                        FontSize="10"
-                        materialDesign:ButtonAssist.CornerRadius="5"
-                        Foreground="White" />
             </Grid>
         </Border>
     </Grid>

@@ -18,23 +18,43 @@
         Loaded="Window_Loaded">
     <Grid>
         <Border Background="#FF0F0F0F"
-                CornerRadius="5,5,5,5"
-                BorderBrush="#FF1E1E1E"
-                BorderThickness="2"
-                MouseLeftButtonDown="Border_MouseLeftButtonDown">
+        CornerRadius="5,5,5,5"
+        BorderBrush="#FF1E1E1E"
+        BorderThickness="2"
+        MouseLeftButtonDown="Border_MouseLeftButtonDown"
+        Name="MainBorder"
+        MouseMove="MainBorder_MouseMove">
             <Grid>
                 <Border Name="RotatingBorder">
                     <Border.Background>
                         <LinearGradientBrush>
+                            <!-- Add RotateTransform here -->
                             <LinearGradientBrush.RelativeTransform>
                                 <RotateTransform x:Name="GradientRotation" CenterX="0.5" CenterY="0.5" Angle="0"/>
                             </LinearGradientBrush.RelativeTransform>
-                            <GradientStop Color="#200c35" Offset="0"/>
-                            <GradientStop Color="#0a0608" Offset="0.65"/>
-                            <GradientStop Color="#000000" Offset="1"/>
+                            <GradientStop Color="#000000" Offset="0.4"/>
+                            <GradientStop Color="#0f0333" Offset="1"/>
                         </LinearGradientBrush>
                     </Border.Background>
                 </Border>
+                <Label Content="Aimmy" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="White" FontSize="14" Margin="40,0,0,0"/>
+                <Path x:Name="CometLogo"
+                      Fill="White"
+                      StrokeThickness="1.33333"
+                      Stretch="Fill"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top"
+                      Width="50"
+                      Height="25"
+                      Margin="15,10,0,0">
+                    <Path.Data>
+                        <PathGeometry Figures="M 18.2472,490.72756 0.18686636,472.66723 153.0173,318.84293 305.84774,165.01862 l 17.74245,17.70593 17.74244,17.70592 17.0189,-16.98112 c 9.36039,-9.33961 17.60957,-16.98112 18.33151,-16.98112 0.72194,0 69.86022,68.54563 153.64061,152.32363 l 152.32798,152.32362 -18.32581,18.45368 -18.3258,18.45368 -152.3021,-153.11064 -152.3021,-153.11063 -20.36457,20.6423 C 309.83073,233.79713 241.18587,302.86906 168.4871,375.93703 L 36.307534,508.7879 Z"
+                                      FillRule="NonZero" />
+                    </Path.Data>
+                    <Path.RenderTransform>
+                        <ScaleTransform ScaleX="0.4" ScaleY="0.4"/>
+                    </Path.RenderTransform>
+                </Path>
                 <Grid VerticalAlignment="Top"
                       Height="40">
                     <Button x:Name="Exit"
@@ -65,74 +85,109 @@
                             Click="Minimize_Click" />
                 </Grid>
                 <Grid x:Name="MenuBar"
-                      Margin="0,0,0,0">
-                    <Border VerticalAlignment="Top"
-                            Margin="0,0,62,0"
-                            Height="34"
+                      Margin="0,0,0,0"
+                      Width="50"
+                      HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10*"/>
+                        <RowDefinition Height="137*"/>
+                    </Grid.RowDefinitions>
+                    <Border
                             CornerRadius="5,5,5,5"
                             BorderBrush="#001E1E1E"
-                            BorderThickness="1">
+                            BorderThickness="1" Grid.RowSpan="2">
                         <Grid>
+                            <Ellipse x:Name="LeftDot" Width="50" Height="50" Opacity="100" Margin="25,25,-25,335">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush>
+                                        <GradientStop Color="#712fc6" Offset="0"/>
+                                        <GradientStop Color="#00000000" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                                <Ellipse.Clip>
+                                    <RectangleGeometry Rect="0,0,25,50"/>
+                                </Ellipse.Clip>
+                            </Ellipse>
+                            <Ellipse x:Name="RightDot" Width="50" Height="50" Opacity="100" Margin="-25,25,25,335">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush>
+                                        <GradientStop Color="#712fc6" Offset="0"/>
+                                        <GradientStop Color="#00000000" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                                <Ellipse.Clip>
+                                    <RectangleGeometry Rect="25,0,50,50"/>
+                                </Ellipse.Clip>
+                            </Ellipse>
                             <Button x:Name="Selection1"
-                                    Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
-                                    Padding="0,0,0,0"
-                                    BorderThickness="0,0,0,0"
-                                    Content="Aim Aligner"
-                                    FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
-                                    HorizontalAlignment="Left"
-                                    Width="110"
-                                    materialDesign:RippleAssist.IsDisabled="True"
-                                    Foreground="White"
-                                    Click="Selection_Click"
-                                    Tag="AimMenu" />
+                                Background="{x:Null}"
+                                BorderBrush="{x:Null}"
+                                Padding="0,0,0,0"
+                                BorderThickness="0,0,0,0"
+                                Margin="0,40,0,0"
+                                FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Height="50"
+                                Width="50"
+                                materialDesign:RippleAssist.IsDisabled="True"
+                                Click="Selection_Click"
+                                Tag="AimMenu">
+                                <Image Source="Images/AimMenu.png" Stretch="Fill" Width="25" Height="25"/>
+                            </Button>
                             <Button x:Name="Selection2"
-                                    Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
-                                    Padding="0,0,0,0"
-                                    BorderThickness="0,0,0,0"
-                                    Content="Misc"
-                                    FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
-                                    HorizontalAlignment="Left"
-                                    Width="100"
-                                    Margin="90,0,0,0"
-                                    materialDesign:RippleAssist.IsDisabled="True"
-                                    Foreground="White"
-                                    Click="Selection_Click"
-                                    Tag="MiscMenu" />
+                                Background="{x:Null}"
+                                BorderBrush="{x:Null}"
+                                Padding="0,0,0,0"
+                                BorderThickness="0,0,0,0"
+                                Margin="0,90,0,0"
+                                Height="50"
+                                FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Left"
+                                Width="50"
+                                materialDesign:RippleAssist.IsDisabled="True"
+                                Click="Selection_Click"
+                                Tag="MiscMenu">
+                                <Image Source="Images/MiscMenu.png" Width="25" Height="25" Stretch="Fill"/>
+                            </Button>
                             <Button x:Name="Selection3"
-                                    Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
-                                    Padding="0,0,0,0"
-                                    BorderThickness="0,0,0,0"
-                                    Content="Model Selector"
-                                    FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
-                                    HorizontalAlignment="Left"
-                                    Width="100"
-                                    Margin="180,0,0,0"
-                                    materialDesign:RippleAssist.IsDisabled="True"
-                                    Foreground="White"
-                                    Click="Selection_Click"
-                                    Tag="SelectorMenu" />
+                                Background="{x:Null}"
+                                BorderBrush="{x:Null}"
+                                Padding="0,0,0,0"
+                                BorderThickness="0,0,0,0"
+                                FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Width="50"
+                                Height="50"
+                                Margin="0,140,0,0"
+                                materialDesign:RippleAssist.IsDisabled="True"
+                                Click="Selection_Click"
+                                Tag="SelectorMenu">
+                                <Image Source="Images/SelectorMenu.png" Stretch="Fill" Width="25" Height="25"/>
+                            </Button>
                             <Button x:Name="Selection4"
-                                    Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
-                                    Padding="0,0,0,0"
-                                    BorderThickness="0,0,0,0"
-                                    Content="Settings"
-                                    FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
-                                    HorizontalAlignment="Left"
-                                    Width="100"
-                                    Margin="280,0,0,0"
-                                    materialDesign:RippleAssist.IsDisabled="True"
-                                    Foreground="White"
-                                    Click="Selection_Click"
-                                    Tag="SettingsMenu" />
+                                Background="{x:Null}"
+                                BorderBrush="{x:Null}"
+                                Padding="0,0,0,0"
+                                BorderThickness="0,0,0,0"
+                                Height="50"
+                                VerticalAlignment="Top"
+                                FontFamily="/AimmyWPF;component/Fonts/#Atkinson Hyperlegible"
+                                HorizontalAlignment="Left"
+                                Width="50"
+                                Margin="0,190,0,0"
+                                materialDesign:RippleAssist.IsDisabled="True"
+                                Click="Selection_Click"
+                                Tag="SettingsMenu">
+                                <Image Source="Images/SettingsMenu.png" Stretch="Fill" Width="25" Height="25"/>
+                            </Button>
                         </Grid>
                     </Border>
                 </Grid>
                 <Grid x:Name="Menus"
-                      Margin="10,54,10,10">
+                      Margin="70,54,10,10">
                     <ScrollViewer x:Name="AimMenu"
               VerticalScrollBarVisibility="Hidden"
               PanningMode="VerticalOnly"
