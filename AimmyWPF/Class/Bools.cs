@@ -8,6 +8,7 @@
 
         public static bool AIAlwaysOn = false;
         public static bool AIPredictions = false;
+        public static bool SecondKey = false;
 
         public static bool ShowFOV = false;
         public static bool TravellingFOV = false;

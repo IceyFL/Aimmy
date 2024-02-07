@@ -10,7 +10,7 @@ namespace AimmyWPF.UserController
     {
         private static MainWindow MainWin = new MainWindow();
 
-        public ASlider(MainWindow MW, string Text, string NotifierText, string Info, double ButtonSteps)
+        public ASlider(MainWindow MW, string Text, double ButtonSteps)
         {
             InitializeComponent();
             Title.Content = Text;

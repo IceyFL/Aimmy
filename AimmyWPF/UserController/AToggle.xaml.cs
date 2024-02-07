@@ -10,7 +10,7 @@ namespace AimmyWPF.UserController
     {
         private static MainWindow MainWin = new MainWindow();
 
-        public AToggle(MainWindow MW, string Text, string Info)
+        public AToggle(MainWindow MW, string Text)
         {
             InitializeComponent();
             Title.Content = Text;

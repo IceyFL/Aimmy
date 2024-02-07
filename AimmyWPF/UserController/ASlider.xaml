@@ -39,7 +39,7 @@
                        HorizontalAlignment="Right"
                        Width="236"
                        HorizontalContentAlignment="Right"
-                       Margin="0,5,35,0" />
+                       Margin="0,5,0,0" />
                 <Button x:Name="SubtractOne"
                         Content="&#xE949;"
                         HorizontalAlignment="Left"
