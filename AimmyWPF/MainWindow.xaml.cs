@@ -80,7 +80,7 @@ namespace AimmyWPF
             { "AimMethod", 0 },
             { "RecoilStrength", 10 },
             { "RecoilDelay", 200 },
-            { "RecoilActivationDelay", 50 },
+            { "RecoilActivationDelay", 10 },
             { "AIFPS", 40 }
         };
 
@@ -211,7 +211,6 @@ namespace AimmyWPF
 
             // Start the loop that runs the model
             Task.Run(() => StartModelCaptureLoop());
-            Task.Run(() => TitleLoop());
             Task.Run(() => RecoilLoop());
         }
 
@@ -449,23 +448,6 @@ namespace AimmyWPF
             }
         }
 
-        private async Task TitleLoop()
-        {
-            cts = new CancellationTokenSource();
-
-            while (!cts.Token.IsCancellationRequested)
-            {
-                await Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    Random random = new Random();
-                    int randomNumber = random.Next(1, 10000);
-                    string title = randomNumber.ToString("D4");
-                    this.Title = title;
-                });
-                await Task.Delay(2000);
-            }
-        }
-
         private async Task RecoilLoop()
         {
             cts = new CancellationTokenSource();
@@ -480,6 +462,13 @@ namespace AimmyWPF
                         await Task.Delay((int)aimmySettings["RecoilDelay"]);
                     }
                 }
+                                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    Random random = new Random();
+                    int randomNumber = random.Next(1, 10000);
+                    string title = randomNumber.ToString("D4");
+                    this.Title = title;
+                });
                 await Task.Delay((int)aimmySettings["RecoilActivationDelay"]);
             }
         }
@@ -1213,12 +1202,13 @@ namespace AimmyWPF
                     string modelPath = Path.Combine("bin/models", selectedModel);
 
                     _onnxModel?.Dispose();
-                    _onnxModel = new AIModel(modelPath)
+                    Task.Delay(100);
+                    Task.Run(() => _onnxModel = new AIModel(modelPath)
                     {
                         ConfidenceThreshold = (float)(aimmySettings["AI_Min_Conf"] / 100.0f),
                         CollectData = toggleState["CollectData"],
                         FovSize = (int)aimmySettings["FOV_Size"]
-                    };
+                    });
 
                     SelectedModelNotifier.Content = "Loaded Model: " + selectedModel;
                     lastLoadedModel = selectedModel;
