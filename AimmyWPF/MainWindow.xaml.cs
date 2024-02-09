@@ -47,12 +47,10 @@ namespace AimmyWPF
         private AIModel _onnxModel;
         private InputBindingManager bindingManager;
         private InputBindingManager ExtraKey;
-        private InputBindingManager RightClick;
-        private InputBindingManager LeftClick;
+        private InputBindingManager RecoilKey;
         private bool IsHolding_Binding = false;
         private bool IsHolding_Binding2 = false;
-        private bool IsHolding_Left = false;
-        private bool IsHolding_Right = false;
+        private bool RecoilKeyHeld = false;
         private CancellationTokenSource cts;
 
         private enum MenuPosition
@@ -81,7 +79,8 @@ namespace AimmyWPF
             { "RecoilStrength", 10 },
             { "RecoilDelay", 200 },
             { "RecoilActivationDelay", 10 },
-            { "AIFPS", 40 }
+            { "AIFPS", 40 },
+            { "MouseMoveMethod", 0 }
         };
 
         private Dictionary<string, bool> toggleState = new()
@@ -169,15 +168,10 @@ namespace AimmyWPF
             ExtraKey.OnBindingPressed += (binding) => { IsHolding_Binding2 = true; };
             ExtraKey.OnBindingReleased += (binding) => { IsHolding_Binding2 = false; };
 
-            RightClick = new InputBindingManager();
-            RightClick.SetupDefault("Right");
-            RightClick.OnBindingPressed += (binding) => { IsHolding_Right = true; };
-            RightClick.OnBindingReleased += (binding) => { IsHolding_Right = false; };
-
-            LeftClick = new InputBindingManager();
-            LeftClick.SetupDefault("Left");
-            LeftClick.OnBindingPressed += (binding) => { IsHolding_Left = true; };
-            LeftClick.OnBindingReleased += (binding) => { IsHolding_Left = false; };
+            RecoilKey = new InputBindingManager();
+            RecoilKey.SetupDefault("V");
+            RecoilKey.OnBindingPressed += (binding) => {RecoilKeyHeld = true;};
+            RecoilKey.OnBindingReleased += (binding) => {RecoilKeyHeld = false;};
 
             // Load UI
             InitializeMenuPositions();
@@ -320,7 +314,7 @@ namespace AimmyWPF
             Point newPosition = CubicBezier(start, end, control1, control2, 1 - Alpha);
             Point newPosition2 = CubicBezier(start, end, control3, control4, 1 - Beta);
 
-            mouse_event(MOUSEEVENTF_MOVE, (uint)newPosition.X, (uint)newPosition2.Y, 0, 0);
+            mouseMove((int)newPosition.X, (int)newPosition2.Y);
 
             if (toggleState["TriggerBot"])
             {
@@ -448,21 +442,33 @@ namespace AimmyWPF
             }
         }
 
+        private async Task mouseMove(int x, int y) 
+        {
+            if (aimmySettings["MouseMoveMethod"] == 0)
+            {
+                mouse_event(MOUSEEVENTF_MOVE, (uint)x, (uint)y, 0, 0);
+            }
+            else if (aimmySettings["MouseMoveMethod"] == 1)
+            {
+                CVE.Mouse.Move(0, x, y, 0);
+            }
+        }
+
         private async Task RecoilLoop()
         {
             cts = new CancellationTokenSource();
 
             while (!cts.Token.IsCancellationRequested)
             {
-                if (Bools.Recoil && IsHolding_Right && IsHolding_Left)
+                if (Bools.Recoil && RecoilKeyHeld)
                 {
-                    while (IsHolding_Right && IsHolding_Left)
+                    while (RecoilKeyHeld)
                     {
-                        mouse_event(MOUSEEVENTF_MOVE, 0, (uint)aimmySettings["RecoilStrength"], 0, 0);
+                        await mouseMove(0, (int)aimmySettings["RecoilStrength"]);
                         await Task.Delay((int)aimmySettings["RecoilDelay"]);
                     }
                 }
-                                await Application.Current.Dispatcher.InvokeAsync(() =>
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Random random = new Random();
                     int randomNumber = random.Next(1, 10000);
@@ -767,7 +773,26 @@ namespace AimmyWPF
                 AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
             };
 
-            leftPanel.Children.Add(AimMethod);
+            ASlider MouseMethodSlider = new(this, "Mouse Movement", 1);
+
+            Dictionary<double, string> MouseMoveMethod = new Dictionary<double, string>
+            {
+                { 0, "Mouse Event" },
+                { 1, "Logitech Mouse Driver" }
+            };
+            MouseMethodSlider.Slider.Minimum = 0;
+            MouseMethodSlider.Slider.Maximum = 1;
+            MouseMethodSlider.Slider.Value = 0;
+            MouseMethodSlider.AdjustNotifier.Content = MouseMoveMethod[MouseMethodSlider.Slider.Value];
+            MouseMethodSlider.Slider.TickFrequency = 1;
+            MouseMethodSlider.Slider.ValueChanged += (s, x) =>
+            {
+                double method = MouseMethodSlider.Slider.Value;
+                aimmySettings["MouseMoveMethod"] = method;
+                MouseMethodSlider.AdjustNotifier.Content = MouseMoveMethod[MouseMethodSlider.Slider.Value];
+            };
+
+            leftPanel.Children.Add(MouseMethodSlider);
 
             ASlider FPS = new(this, "AI FPS", 1);
 
@@ -940,6 +965,20 @@ namespace AimmyWPF
             };
 
             leftPanel2.Children.Add(RecoilStrength);
+
+            AKeyChanger RecoilKeyChanger = new("Change Keybind", "Left");
+            RecoilKeyChanger.Reader.Click += (s, x) =>
+            {
+                RecoilKeyChanger.KeyNotifier.Content = "Listening..";
+                RecoilKey.StartListeningForBinding();
+            };
+
+            RecoilKey.OnBindingSet += (binding) =>
+            {
+                RecoilKeyChanger.KeyNotifier.Content = binding;
+            };
+
+            leftPanel2.Children.Add(RecoilKeyChanger);
 
             ASlider RecoilDelay = new(this, "Fire Rate(ms)", 1);
 
@@ -1511,8 +1550,7 @@ namespace AimmyWPF
             // Unhook keybind hooker
             bindingManager.StopListening();
             ExtraKey.StopListening();
-            RightClick.StopListening();
-            LeftClick.StopListening();
+            RecoilKey.StopListening();
             FOVOverlay.Close();
             DetectedPlayerOverlay.Close();
 
