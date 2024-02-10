@@ -1,7 +1,6 @@
 ﻿using Gma.System.MouseKeyHook;
 using System;
 using System.Windows.Forms;
-using static System.Runtime.CompilerServices.RuntimeHelpers;
 
 public class InputBindingManager
 {
@@ -55,7 +54,7 @@ public class InputBindingManager
         }
     }
 
-    private void GlobalHookMouseDown(object sender, MouseEventArgs e)
+    public void GlobalHookMouseDown(object sender, MouseEventArgs e)
     {
         if (isSettingBinding)
         {
