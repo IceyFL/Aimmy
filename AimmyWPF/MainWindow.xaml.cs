@@ -140,7 +140,7 @@ namespace AimmyWPF
             {
                 System.Windows.Forms.MessageBox.Show("Visual C++ Redistributables x64 are not installed on this device, please install them before using Aimmy to avoid issues.", "Load Error");
                 Process.Start("https://aka.ms/vs/17/release/vc_redist.x64.exe");
-                System.Windows.Application.Current.Shutdown();
+                Application.Current.Shutdown();
             }
             //if(!RM.IsDotNetInstalled()) not working
             //{
@@ -168,7 +168,7 @@ namespace AimmyWPF
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show($"Error creating a required directory: {ex}");
-                System.Windows.Application.Current.Shutdown(); // We don't want to continue running without that folder.
+                Application.Current.Shutdown(); // We don't want to continue running without that folder.
             }
 
 
@@ -229,7 +229,7 @@ namespace AimmyWPF
 
         private void ToggleRecoil() 
         {
-            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -627,7 +627,7 @@ namespace AimmyWPF
 
         private async void Selection_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is System.Windows.Forms.Button clickedButton)
+            if (sender is Button clickedButton)
             {
                 MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
 
