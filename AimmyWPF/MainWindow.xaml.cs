@@ -46,11 +46,14 @@ namespace AimmyWPF
 
         private AIModel _onnxModel;
         private InputBindingManager bindingManager;
-        private InputBindingManager ExtraKey;
-        private InputBindingManager RecoilKey;
-        private bool IsHolding_Binding = false;
-        private bool IsHolding_Binding2 = false;
-        private bool RecoilKeyHeld = false;
+        public bool Key1Change = false;
+        public bool Key2Change = false;
+        public bool RecoilKeyChange = false;
+        public bool RecoilToggleKeyChange = false;
+        string key1 = "Right";
+        string key2 = "Left";
+        string RecoilKey = "Left";
+        string RecoilToggleKey = "P";
         private CancellationTokenSource cts;
 
         private enum MenuPosition
@@ -62,6 +65,10 @@ namespace AimmyWPF
         }
 
         private DateTime lastExecutionTime = DateTime.MinValue;
+
+
+
+        public List<string> KeyDown = new List<string> { };
 
         // Changed to Dynamic from Double because it was making the Config System hard to rework :/
         public Dictionary<string, dynamic> aimmySettings = new()
@@ -103,6 +110,13 @@ namespace AimmyWPF
             { "PDW_BorderThickness", 1 },
             { "PDW_Opacity", 1 }
         };
+
+        //setup needed buttons and toggles
+        AKeyChanger RecoilKeyChanger;
+        AKeyChanger RecoilToggleKeyChanger;
+        AKeyChanger Change_KeyPress;
+        AKeyChanger Change_KeyPress2;
+        AToggle RecoilState;
 
         private Thickness WinTooLeft = new(-1680, 0, 1680, 0);
         private Thickness WinVeryLeft = new(-1120, 0, 1120, 0);
@@ -157,21 +171,23 @@ namespace AimmyWPF
                 Application.Current.Shutdown(); // We don't want to continue running without that folder.
             }
 
+
             // Setup key/mouse hook
             bindingManager = new InputBindingManager();
-            bindingManager.SetupDefault("Right");
-            bindingManager.OnBindingPressed += (binding) => { IsHolding_Binding = true; };
-            bindingManager.OnBindingReleased += (binding) => { IsHolding_Binding = false; };
-
-            ExtraKey = new InputBindingManager();
-            ExtraKey.SetupDefault("Left");
-            ExtraKey.OnBindingPressed += (binding) => { IsHolding_Binding2 = true; };
-            ExtraKey.OnBindingReleased += (binding) => { IsHolding_Binding2 = false; };
-
-            RecoilKey = new InputBindingManager();
-            RecoilKey.SetupDefault("V");
-            RecoilKey.OnBindingPressed += (binding) => {RecoilKeyHeld = true;};
-            RecoilKey.OnBindingReleased += (binding) => {RecoilKeyHeld = false;};
+            bindingManager.Setup();
+            bindingManager.OnBindingPressed += (binding) =>
+            {
+                if ((KeyDown.Contains(binding) == false))
+                {
+                    KeyDown.Add(binding);
+                    if (binding == RecoilToggleKey){ ToggleRecoil(); }
+                }
+                if (Key1Change) { key1 = binding; Key1Change = false; Change_KeyPress.KeyNotifier.Content = binding; }
+                else if (Key2Change) { key2 = binding; Key2Change = false; Change_KeyPress2.KeyNotifier.Content = binding; }
+                else if (RecoilKeyChange) { RecoilKey = binding; RecoilKeyChange = false; RecoilKeyChanger.KeyNotifier.Content = binding; }
+                else if (RecoilToggleKeyChange) { RecoilToggleKey = binding; RecoilToggleKeyChange = false; RecoilToggleKeyChanger.KeyNotifier.Content = binding; }
+            };
+            bindingManager.OnBindingReleased += (binding) => { try { KeyDown.Remove(binding); } catch {} };
 
             // Load UI
             InitializeMenuPositions();
@@ -210,6 +226,11 @@ namespace AimmyWPF
 
         private HashSet<string> AvailableModels = new();
         private HashSet<string> AvailableConfigs = new();
+
+        private void ToggleRecoil() 
+        {
+            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -349,6 +370,7 @@ namespace AimmyWPF
 
             Console.WriteLine(AIModel.AIConfidence.ToString());
 
+            bool IsHolding_Binding = (KeyDown.Contains(key1) || (Bools.SecondKey && KeyDown.Contains(key2)));
             // Handle Prediction
             if (toggleState["PredictionToggle"])
             {
@@ -362,7 +384,7 @@ namespace AimmyWPF
                 predictionManager.UpdateKalmanFilter(detection);
                 var predictedPosition = predictionManager.GetEstimatedPosition();
 
-                if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false || (Bools.AimOnlyWhenBindingHeld && Bools.SecondKey==true && IsHolding_Binding2))
+                if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
                     MoveCrosshair(predictedPosition.X, predictedPosition.Y);
                 //MoveCrosshair(predictedPosition.X, predictedPosition.Y);
 
@@ -379,7 +401,7 @@ namespace AimmyWPF
             }
             else
             {
-                if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false || (Bools.AimOnlyWhenBindingHeld && Bools.SecondKey==true && IsHolding_Binding2))
+                if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
                     MoveCrosshair(detectedX, detectedY);
             }
 
@@ -409,20 +431,21 @@ namespace AimmyWPF
 
             while (!cts.Token.IsCancellationRequested)
             {
+                bool IsHolding_Binding = (KeyDown.Contains(key1) || (Bools.SecondKey && KeyDown.Contains(key2)));
                 TimeSpan elapsed = DateTime.Now - lastExecutionTime;
                 if (elapsed.TotalMilliseconds > 1000.0 / aimmySettings["AIFPS"])
                 {
                     lastExecutionTime = DateTime.Now;
                     if (toggleState["AimbotToggle"] && Bools.ConstantTracking == false)
                     {
-                        if (IsHolding_Binding || (Bools.AimOnlyWhenBindingHeld && Bools.SecondKey == true && IsHolding_Binding2))
+                        if (IsHolding_Binding)
                             await ModelCapture();
                     }
                     else if (toggleState["AimbotToggle"] && Bools.ConstantTracking)
                     {
                         await ModelCapture();
                     }
-                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBot"] && (IsHolding_Binding || (Bools.SecondKey == true && IsHolding_Binding2)) && Bools.ConstantTracking == false) // Triggerbot Only
+                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBot"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
                     {
                         await ModelCapture(true);
                     }
@@ -460,12 +483,14 @@ namespace AimmyWPF
 
             while (!cts.Token.IsCancellationRequested)
             {
+                bool RecoilKeyHeld = (KeyDown.Contains(RecoilKey));
                 if (Bools.Recoil && RecoilKeyHeld)
                 {
                     while (RecoilKeyHeld)
                     {
                         await mouseMove(0, (int)aimmySettings["RecoilStrength"]);
                         await Task.Delay((int)aimmySettings["RecoilDelay"]);
+                        RecoilKeyHeld = (KeyDown.Contains(RecoilKey));
                     }
                 }
                 await Application.Current.Dispatcher.InvokeAsync(() =>
@@ -716,17 +741,17 @@ namespace AimmyWPF
             leftPanel.Children.Add(new ALabel("Aim Assist"));
 
 
-            AToggle Enable_AIAimAligner = new(this, "Aim Assist");
+            AToggle Enable_AIAimAligner = new("Aim Assist");
             Enable_AIAimAligner.Reader.Name = "AimbotToggle";
             SetupToggle(Enable_AIAimAligner, state => Bools.AIAimAligner = state, Bools.AIAimAligner);
             leftPanel.Children.Add(Enable_AIAimAligner);
 
-            AToggle Enable_ConstantAITracking = new(this, "Constant AI Tracking");
+            AToggle Enable_ConstantAITracking = new("Constant AI Tracking");
             Enable_ConstantAITracking.Reader.Name = "ConstantAITracking";
             SetupToggle(Enable_ConstantAITracking, state => Bools.ConstantTracking = state, Bools.ConstantTracking);
             leftPanel.Children.Add(Enable_ConstantAITracking);
 
-            ASlider AIMinimumConfidence = new(this, "AI Minimum Confidence", 1);
+            ASlider AIMinimumConfidence = new("AI Minimum Confidence", 1);
 
             AIMinimumConfidence.Slider.Minimum = 1;
             AIMinimumConfidence.Slider.Maximum = 100;
@@ -754,7 +779,7 @@ namespace AimmyWPF
              leftPanel.Children.Add(AIMinimumConfidence);
 
 
-            ASlider AimMethod = new(this, "Aim Method", 1);
+            ASlider AimMethod = new("Aim Method", 1);
 
             Dictionary<double, string> weaponNames = new Dictionary<double, string>
             {
@@ -773,7 +798,7 @@ namespace AimmyWPF
                 AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
             };
 
-            ASlider MouseMethodSlider = new(this, "Mouse Movement", 1);
+            ASlider MouseMethodSlider = new("Mouse Movement", 1);
 
             Dictionary<double, string> MouseMoveMethod = new Dictionary<double, string>
             {
@@ -794,7 +819,7 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(MouseMethodSlider);
 
-            ASlider FPS = new(this, "AI FPS", 1);
+            ASlider FPS = new("AI FPS", 1);
 
             FPS.Slider.Minimum = 0;
             FPS.Slider.Maximum = 200;
@@ -808,37 +833,27 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(FPS);
 
-            AKeyChanger Change_KeyPress = new("Change Keybind", "Right");
+            Change_KeyPress = new("Change Keybind", "Right");
             Change_KeyPress.Reader.Click += (s, x) =>
             {
                 Change_KeyPress.KeyNotifier.Content = "Listening..";
-                bindingManager.StartListeningForBinding();
-            };
-
-            bindingManager.OnBindingSet += (binding) =>
-            {
-                Change_KeyPress.KeyNotifier.Content = binding;
+                Key1Change = true;
             };
 
             leftPanel.Children.Add(Change_KeyPress);
 
-            AToggle SecondKey = new(this, "Enable Second Key");
+            AToggle SecondKey = new("Enable Second Key");
             SecondKey.Reader.Name = "SecondKey";
             SetupToggle(SecondKey, state => Bools.SecondKey = state, Bools.SecondKey);
 
             leftPanel.Children.Add(SecondKey);
 
 
-            AKeyChanger Change_KeyPress2 = new("Change Keybind", "Left");
+            Change_KeyPress2 = new("Change Keybind", "Left");
             Change_KeyPress2.Reader.Click += (s, x) =>
             {
                 Change_KeyPress2.KeyNotifier.Content = "Listening..";
-                ExtraKey.StartListeningForBinding();
-            };
-
-            ExtraKey.OnBindingSet += (binding) =>
-            {
-                Change_KeyPress2.KeyNotifier.Content = binding;
+                Key2Change = true;
             };
 
             leftPanel.Children.Add(Change_KeyPress2);
@@ -849,14 +864,14 @@ namespace AimmyWPF
             //SetupToggle(Enable_AlwaysOn, state => Bools.AIAlwaysOn = state, Bools.AIAlwaysOn);
             //AimScroller.Children.Add(Enable_AlwaysOn);
 
-            AToggle Enable_AIPredictions = new(this, "Predictions");
+            AToggle Enable_AIPredictions = new("Predictions");
             Enable_AIPredictions.Reader.Name = "PredictionToggle";
             SetupToggle(Enable_AIPredictions, state => Bools.AIPredictions = state, Bools.AIPredictions);
             leftPanel.Children.Add(Enable_AIPredictions);
 
             rightPanel.Children.Add(new ALabel("Aim Config"));
 
-            ASlider MouseSensitivtyX = new ASlider(this, "Mouse Sensitivity X", 0.01);
+            ASlider MouseSensitivtyX = new ASlider("Mouse Sensitivity X", 0.01);
 
             MouseSensitivtyX.Slider.Minimum = 0.01;
             MouseSensitivtyX.Slider.Maximum = 1;
@@ -869,7 +884,7 @@ namespace AimmyWPF
 
             rightPanel.Children.Add(MouseSensitivtyX);
 
-            ASlider MouseSensitivtyY = new ASlider(this, "Mouse Sensitivity Y", 0.01);
+            ASlider MouseSensitivtyY = new ASlider("Mouse Sensitivity Y", 0.01);
 
             MouseSensitivtyY.Slider.Minimum = 0.01;
             MouseSensitivtyY.Slider.Maximum = 1;
@@ -882,7 +897,7 @@ namespace AimmyWPF
 
             rightPanel.Children.Add(MouseSensitivtyY);
 
-            ASlider MouseJitter = new(this, "Mouse Jitter", 0.01);
+            ASlider MouseJitter = new("Mouse Jitter", 0.01);
 
             MouseJitter.Slider.Minimum = 0;
             MouseJitter.Slider.Maximum = 15;
@@ -894,7 +909,7 @@ namespace AimmyWPF
             };
             rightPanel.Children.Add(MouseJitter);
 
-            ASlider YOffset = new(this, "Y Offset (Up/Down)", 1);
+            ASlider YOffset = new("Y Offset (Up/Down)", 1);
 
             YOffset.Slider.Minimum = -150;
             YOffset.Slider.Maximum = 150;
@@ -907,7 +922,7 @@ namespace AimmyWPF
 
             rightPanel.Children.Add(YOffset);
 
-            ASlider XOffset = new(this, "X Offset (Left/Right)", 1);
+            ASlider XOffset = new("X Offset (Left/Right)", 1);
 
             XOffset.Slider.Minimum = -150;
             XOffset.Slider.Maximum = 150;
@@ -924,12 +939,12 @@ namespace AimmyWPF
 
             leftPanel1.Children.Add(new ALabel("Auto Trigger"));
 
-            AToggle Enable_TriggerBot = new(this, "Enable Auto Trigger");
+            AToggle Enable_TriggerBot = new("Enable Auto Trigger");
             Enable_TriggerBot.Reader.Name = "TriggerBot";
             SetupToggle(Enable_TriggerBot, state => Bools.Triggerbot = state, Bools.Triggerbot);
             leftPanel1.Children.Add(Enable_TriggerBot);
 
-            ASlider TriggerBot_Delay = new(this, "Auto Trigger Delay", 0.1);
+            ASlider TriggerBot_Delay = new("Auto Trigger Delay", 0.1);
 
             TriggerBot_Delay.Slider.Minimum = 0.01;
             TriggerBot_Delay.Slider.Maximum = 1;
@@ -947,12 +962,12 @@ namespace AimmyWPF
 
             leftPanel2.Children.Add(new ALabel("Anti Recoil"));
 
-            AToggle RecoilState = new(this, "Anti Recoil");
+            RecoilState = new("Anti Recoil");
             RecoilState.Reader.Name = "RecoilToggle";
             SetupToggle(RecoilState, state => Bools.Recoil = state, Bools.Recoil);
             leftPanel2.Children.Add(RecoilState);
 
-            ASlider RecoilStrength = new(this, "Anti Recoil Strength", 1);
+            ASlider RecoilStrength = new("Anti Recoil Strength", 1);
 
             RecoilStrength.Slider.Minimum = 1;
             RecoilStrength.Slider.Maximum = 50;
@@ -966,21 +981,25 @@ namespace AimmyWPF
 
             leftPanel2.Children.Add(RecoilStrength);
 
-            AKeyChanger RecoilKeyChanger = new("Change Keybind", "Left");
+            RecoilKeyChanger = new("Recoil Keybind", "Left");
             RecoilKeyChanger.Reader.Click += (s, x) =>
             {
                 RecoilKeyChanger.KeyNotifier.Content = "Listening..";
-                RecoilKey.StartListeningForBinding();
-            };
-
-            RecoilKey.OnBindingSet += (binding) =>
-            {
-                RecoilKeyChanger.KeyNotifier.Content = binding;
+                RecoilKeyChange = true;
             };
 
             leftPanel2.Children.Add(RecoilKeyChanger);
 
-            ASlider RecoilDelay = new(this, "Fire Rate(ms)", 1);
+            RecoilToggleKeyChanger = new("Recoil Toggle Keybind", "P");
+            RecoilToggleKeyChanger.Reader.Click += (s, x) =>
+            {
+                RecoilToggleKeyChanger.KeyNotifier.Content = "Listening..";
+                RecoilToggleKeyChange = true;
+            };
+
+            leftPanel2.Children.Add(RecoilToggleKeyChanger);
+
+            ASlider RecoilDelay = new("Fire Rate(ms)", 1);
 
             RecoilDelay.Slider.Minimum = 1;
             RecoilDelay.Slider.Maximum = 2000;
@@ -994,7 +1013,7 @@ namespace AimmyWPF
 
             leftPanel2.Children.Add(RecoilDelay);
 
-            ASlider RecoilActivationDelay = new(this, "Activation Delay(ms)", 1);
+            ASlider RecoilActivationDelay = new("Activation Delay(ms)", 1);
 
             RecoilActivationDelay.Slider.Minimum = 1;
             RecoilActivationDelay.Slider.Maximum = 2000;
@@ -1014,12 +1033,12 @@ namespace AimmyWPF
 
             rightPanel1.Children.Add(new ALabel("FOV Config"));
 
-            AToggle Show_FOV = new(this, "Show FOV");
+            AToggle Show_FOV = new("Show FOV");
             Show_FOV.Reader.Name = "ShowFOV";
             SetupToggle(Show_FOV, state => Bools.ShowFOV = state, Bools.ShowFOV);
             rightPanel1.Children.Add(Show_FOV);
 
-            AToggle Travelling_FOV = new(this, "Dynamic FOV");
+            AToggle Travelling_FOV = new("Dynamic FOV");
             Travelling_FOV.Reader.Name = "TravellingFOV";
             SetupToggle(Travelling_FOV, state => Bools.TravellingFOV = state, Bools.TravellingFOV);
             rightPanel1.Children.Add(Travelling_FOV);
@@ -1038,7 +1057,7 @@ namespace AimmyWPF
             };
             rightPanel1.Children.Add(Change_FOVColor);
 
-            ASlider FovSlider = new(this, "FOV Size", 1);
+            ASlider FovSlider = new("FOV Size", 1);
 
             FovSlider.Slider.Minimum = 10;
             FovSlider.Slider.Maximum = 640;
@@ -1067,22 +1086,22 @@ namespace AimmyWPF
 
             rightPanel2.Children.Add(new ALabel("Visual Debugging"));
 
-            AToggle Show_DetectedPlayerWindow = new(this, "Detected Player Window");
+            AToggle Show_DetectedPlayerWindow = new("Detected Player Window");
             Show_DetectedPlayerWindow.Reader.Name = "ShowDetectedPlayerWindow";
             SetupToggle(Show_DetectedPlayerWindow, state => Bools.ShowDetectedPlayerWindow = state, Bools.ShowDetectedPlayerWindow);
             rightPanel2.Children.Add(Show_DetectedPlayerWindow);
 
-            AToggle Show_CurrentDetectedPlayer = new(this, "Current Detection [Red]");
+            AToggle Show_CurrentDetectedPlayer = new("Current Detection [Red]");
             Show_CurrentDetectedPlayer.Reader.Name = "ShowCurrentDetectedPlayer";
             SetupToggle(Show_CurrentDetectedPlayer, state => Bools.ShowCurrentDetectedPlayer = state, Bools.ShowCurrentDetectedPlayer);
             rightPanel2.Children.Add(Show_CurrentDetectedPlayer);
 
-            AToggle Show_UnfilteredDetectedPlayer = new(this, "Unflitered Current Detection [Purple]");
+            AToggle Show_UnfilteredDetectedPlayer = new("Unflitered Current Detection [Purple]");
             Show_UnfilteredDetectedPlayer.Reader.Name = "ShowUnfilteredDetectedPlayer";
             SetupToggle(Show_UnfilteredDetectedPlayer, state => Bools.ShowUnfilteredDetectedPlayer = state, Bools.ShowUnfilteredDetectedPlayer);
             rightPanel2.Children.Add(Show_UnfilteredDetectedPlayer);
 
-            AToggle Show_Prediction = new(this, "AI Prediction [Green]");
+            AToggle Show_Prediction = new("AI Prediction [Green]");
             Show_Prediction.Reader.Name = "ShowAIPrediction";
             SetupToggle(Show_Prediction, state => Bools.ShowPrediction = state, Bools.ShowPrediction);
             rightPanel2.Children.Add(Show_Prediction);
@@ -1095,7 +1114,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(new ALabel("Visual Debugging Customization"));
 
-            ASlider Change_PDW_Size = new(this, "Detection Window Size", 1);
+            ASlider Change_PDW_Size = new("Detection Window Size", 1);
 
             Change_PDW_Size.Slider.Minimum = 10;
             Change_PDW_Size.Slider.Maximum = 100;
@@ -1110,7 +1129,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(Change_PDW_Size);
 
-            ASlider Change_PDW_CornerRadius = new(this, "Detection Window Corner Radius", 1);
+            ASlider Change_PDW_CornerRadius = new("Detection Window Corner Radius", 1);
 
             Change_PDW_CornerRadius.Slider.Minimum = 0;
             Change_PDW_CornerRadius.Slider.Maximum = 100;
@@ -1125,7 +1144,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(Change_PDW_CornerRadius);
 
-            ASlider Change_PDW_BorderThickness = new(this, "Detection Window Border Thickness", 1);
+            ASlider Change_PDW_BorderThickness = new("Detection Window Border Thickness", 1);
 
             Change_PDW_BorderThickness.Slider.Minimum = 0.1;
             Change_PDW_BorderThickness.Slider.Maximum = 10;
@@ -1140,7 +1159,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(Change_PDW_BorderThickness);
 
-            ASlider Change_PDW_Opacity = new(this, "Detection Window Opacity", 0.1);
+            ASlider Change_PDW_Opacity = new("Detection Window Opacity", 0.1);
 
             Change_PDW_Opacity.Slider.Minimum = 0;
             Change_PDW_Opacity.Slider.Maximum = 1;
@@ -1186,7 +1205,7 @@ namespace AimmyWPF
         {
             SectionPanel leftPanel = new SectionPanel();
 
-            AButton SaveConfigSystem = new(this, "Save Current Config",
+            AButton SaveConfigSystem = new("Save Current Config",
 "This will save the current config for the purposes of publishing.");
 
             SaveConfigSystem.Reader.Click += (s, e) =>
@@ -1468,14 +1487,14 @@ namespace AimmyWPF
 
             SettingsScroller.Children.Add(new AInfoSection());
 
-            AToggle CollectDataWhilePlaying = new(this, "Collect Data While Playing");
+            AToggle CollectDataWhilePlaying = new("Collect Data While Playing");
             CollectDataWhilePlaying.Reader.Name = "CollectData";
             SetupToggle(CollectDataWhilePlaying, state => Bools.CollectDataWhilePlaying = state, Bools.CollectDataWhilePlaying);
             aimingConfigurationPanel.Children.Add(CollectDataWhilePlaying);
 
             bool topMostInitialState = toggleState.ContainsKey("TopMost") ? toggleState["TopMost"] : false;
 
-            AToggle TopMost = new(this, "UI TopMost");
+            AToggle TopMost = new("UI TopMost");
             TopMost.Reader.Name = "TopMost";
             SetupToggle(TopMost, state => Bools.TopMost = state, topMostInitialState);
 
@@ -1549,8 +1568,6 @@ namespace AimmyWPF
 
             // Unhook keybind hooker
             bindingManager.StopListening();
-            ExtraKey.StopListening();
-            RecoilKey.StopListening();
             FOVOverlay.Close();
             DetectedPlayerOverlay.Close();
 

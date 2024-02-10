@@ -8,9 +8,7 @@ namespace AimmyWPF.UserController
     /// </summary>
     public partial class ASlider : UserControl
     {
-        private static MainWindow MainWin = new MainWindow();
-
-        public ASlider(MainWindow MW, string Text, double ButtonSteps)
+        public ASlider(string Text, double ButtonSteps)
         {
             InitializeComponent();
             Title.Content = Text;
@@ -27,8 +25,6 @@ namespace AimmyWPF.UserController
             // Added by Nori
             SubtractOne.Click += (s, e) => Slider.Value = Slider.Value - ButtonSteps;
             AddOne.Click += (s, e) => Slider.Value = Slider.Value + ButtonSteps;
-
-            MainWin = MW;
         }
     }
 }

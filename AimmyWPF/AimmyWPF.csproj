@@ -14,6 +14,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>Twitter</AssemblyName>
     <RootNamespace>Twitter</RootNamespace>
+    <UserSecretsId>91e3774b-f88b-47b5-a970-7978ab291c7a</UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
