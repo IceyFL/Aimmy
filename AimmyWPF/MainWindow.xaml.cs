@@ -14,7 +14,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Visualization;
@@ -230,7 +229,7 @@ namespace AimmyWPF
 
         private void ToggleRecoil() 
         {
-            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
