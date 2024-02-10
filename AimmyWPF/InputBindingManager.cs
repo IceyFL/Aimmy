@@ -29,7 +29,7 @@ public class InputBindingManager
         OnBindingPressed?.Invoke(e.KeyCode.ToString());
     }
 
-    private void GlobalHookMouseDown(object sender, MouseEventArgs e)
+    public void GlobalHookMouseDown(object sender, MouseEventArgs e)
     {
         OnBindingPressed?.Invoke(e.Button.ToString());
     }

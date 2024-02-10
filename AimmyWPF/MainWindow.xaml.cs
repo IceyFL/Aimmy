@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Visualization;
@@ -138,9 +139,9 @@ namespace AimmyWPF
             RequirementsManager RM = new();
             if (!RM.IsVCRedistInstalled())
             {
-                MessageBox.Show("Visual C++ Redistributables x64 are not installed on this device, please install them before using Aimmy to avoid issues.", "Load Error");
+                System.Windows.Forms.MessageBox.Show("Visual C++ Redistributables x64 are not installed on this device, please install them before using Aimmy to avoid issues.", "Load Error");
                 Process.Start("https://aka.ms/vs/17/release/vc_redist.x64.exe");
-                Application.Current.Shutdown();
+                System.Windows.Application.Current.Shutdown();
             }
             //if(!RM.IsDotNetInstalled()) not working
             //{
@@ -167,8 +168,8 @@ namespace AimmyWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error creating a required directory: {ex}");
-                Application.Current.Shutdown(); // We don't want to continue running without that folder.
+                System.Windows.Forms.MessageBox.Show($"Error creating a required directory: {ex}");
+                System.Windows.Application.Current.Shutdown(); // We don't want to continue running without that folder.
             }
 
 
@@ -245,7 +246,7 @@ namespace AimmyWPF
             }
             catch
             {
-                MessageBox.Show("Github is irretrieveable right now, the Downloadable Model menu will not work right now, sorry!");
+                System.Windows.Forms.MessageBox.Show("Github is irretrieveable right now, the Downloadable Model menu will not work right now, sorry!");
             }
         }
 
@@ -493,7 +494,7 @@ namespace AimmyWPF
                         RecoilKeyHeld = (KeyDown.Contains(RecoilKey));
                     }
                 }
-                await Application.Current.Dispatcher.InvokeAsync(() =>
+                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Random random = new Random();
                     int randomNumber = random.Next(1, 10000);
@@ -565,7 +566,7 @@ namespace AimmyWPF
             if ((toggle.Reader.Name == "AimbotToggle" || toggle.Reader.Name == "AimOnlyWhenBindingHeld" || toggle.Reader.Name == "ConstantAITracking" || toggle.Reader.Name == "TriggerBot" || toggle.Reader.Name == "CollectData") && lastLoadedModel == "N/A")
             {
                 SetToggleStatesOnModelNotSelected();
-                MessageBox.Show("Please select a model in the Model Selector before toggling.", "Toggle Error");
+                System.Windows.Forms.MessageBox.Show("Please select a model in the Model Selector before toggling.", "Toggle Error");
                 return;
             }
 
@@ -627,7 +628,7 @@ namespace AimmyWPF
 
         private async void Selection_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button clickedButton)
+            if (sender is System.Windows.Forms.Button clickedButton)
             {
                 MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
 
@@ -770,7 +771,7 @@ namespace AimmyWPF
                     // Prevent double messageboxes..
                     if (AIMinimumConfidence.Slider.Value != aimmySettings["AI_Min_Conf"])
                     {
-                        MessageBox.Show("Unable to set confidence, please select a model and try again.", "Slider Error");
+                        System.Windows.Forms.MessageBox.Show("Unable to set confidence, please select a model and try again.", "Slider Error");
                         AIMinimumConfidence.Slider.Value = aimmySettings["AI_Min_Conf"];
                     }
                 }
@@ -1332,7 +1333,7 @@ namespace AimmyWPF
             }
             if (aimmySettings["Suggested_Model"] != string.Empty)
             {
-                MessageBox.Show("The creator of this model suggests you use this model:" +
+                System.Windows.Forms.MessageBox.Show("The creator of this model suggests you use this model:" +
                     "\n" +
                     aimmySettings["Suggested_Model"], "Suggested Model - Aimmy");
             }
@@ -1389,7 +1390,7 @@ namespace AimmyWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                System.Windows.Forms.MessageBox.Show(ex.ToString());
             }
 
             //ReloadMenu();
@@ -1506,7 +1507,7 @@ namespace AimmyWPF
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void Minimize_Click(object sender, RoutedEventArgs e)
@@ -1577,7 +1578,7 @@ namespace AimmyWPF
             cts.Dispose();
 
             // Close
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         #endregion Window Controls

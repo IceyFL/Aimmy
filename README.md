@@ -1,8 +1,8 @@
 # Undetected Aimmy
 
 This is a modified version of [Aimmy](https://github.com/Babyhamsta/Aimmy)
-It is modified in a way that it should be undetectable as it now has a constantly changin title.
-It is also under the namespace Steam rather than AimmyWPF, if a lot of people begin to use this version, to ensure your version is not detected go into properties and change the default namespace and assembaly name.
+It is modified in a way that it should be undetectable as it now has a constantly changing title.
+It is also under the namespace Steam rather than AimmyWPF, if a lot of people begin to use this version, to ensure your version is not detected go into properties and change the default namespace and assembly name.
 
 It also has extra features such as, anti-recoil, AI FPS Limiter, 2 different aiming methods and a collect data option that includes data annotations for you(refer to Quicker AI Training folder)
 
