@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Visualization;
@@ -108,6 +109,7 @@ namespace AimmyWPF
         public Dictionary<string, dynamic> OverlayProperties = new()
         {
             { "FOV_Color", "#712fc6"},
+            { "MenuColor", "#0f0333"},
             { "PDW_Size", 50 },
             { "PDW_CornerRadius", 0 },
             { "PDW_BorderThickness", 1 },
@@ -145,7 +147,7 @@ namespace AimmyWPF
             {
                 System.Windows.Forms.MessageBox.Show("Visual C++ Redistributables x64 are not installed on this device, please install them before using Aimmy to avoid issues.", "Load Error");
                 Process.Start("https://aka.ms/vs/17/release/vc_redist.x64.exe");
-                Application.Current.Shutdown();
+                System.Windows.Application.Current.Shutdown();
             }
             //if(!RM.IsDotNetInstalled()) not working
             //{
@@ -173,7 +175,7 @@ namespace AimmyWPF
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show($"Error creating a required directory: {ex}");
-                Application.Current.Shutdown(); // We don't want to continue running without that folder.
+                System.Windows.Application.Current.Shutdown(); // We don't want to continue running without that folder.
             }
 
 
@@ -244,12 +246,12 @@ namespace AimmyWPF
 
         private void ToggleRecoil() 
         {
-            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            RecoilState.Reader.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
         }
 
         private void ToggleAim()
         {
-            Enable_AIAimAligner.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Enable_AIAimAligner.Reader.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -514,7 +516,7 @@ namespace AimmyWPF
                         RecoilKeyHeld = (KeyDown.Contains(RecoilKey));
                     }
                 }
-                await Application.Current.Dispatcher.InvokeAsync(() =>
+                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Random random = new Random();
                     int randomNumber = random.Next(1, 10000);
@@ -648,7 +650,7 @@ namespace AimmyWPF
 
         private async void Selection_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button clickedButton)
+            if (sender is System.Windows.Controls.Button clickedButton)
             {
                 MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
 
@@ -1546,10 +1548,125 @@ namespace AimmyWPF
             SetupToggle(TopMost, state => Bools.TopMost = state, topMostInitialState);
 
             aimingConfigurationPanel.Children.Add(TopMost);
+
+            AColorChanger MenuColor = new("Theme Color");
+            MenuColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString("#712fc6");
+            MenuColor.Reader.Click += (s, x) =>
+            {
+                ColorDialog colorDialog = new ColorDialog();
+                if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    Color selectedColor = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
+
+                    // Call ApplyColor method with the selected color
+                    ApplyColor(selectedColor);
+
+                    // Update the MenuColor UI element
+                    MenuColor.ColorChangingBorder.Background = new SolidColorBrush(selectedColor);
+                    OverlayProperties["MenuColor"] = selectedColor.ToString();
+                }
+            };
+            aimingConfigurationPanel.Children.Add(MenuColor);
+
             SettingsScroller.Children.Add(aimingConfigurationPanel);
+
         }
 
         #region Window Controls
+
+        private void ApplyColor(Color selectedColor)
+        {
+            // Adjust the color using the DarkenColor method
+            Color darkerColor = DarkenColor(selectedColor, 0); // You can adjust the darkenAmount here
+
+            // Apply the darker color to the UI element
+            OverlayProperties["MenuColor"] = darkerColor.ToString();
+
+            // Now check if RotatingBorder.Background is a LinearGradientBrush before modifying its gradient stops
+            if (RotatingBorder.Background is LinearGradientBrush brush && brush.GradientStops.Count >= 2)
+            {
+                // Modify the color of the second gradient stop
+                brush.GradientStops[1].Color = darkerColor;
+            }
+            RightDotGradient.GradientStops[0].Color = darkerColor;
+            LeftDotGradient.GradientStops[0].Color = darkerColor;
+
+
+            List<ASlider> allSliders = ASliderFinder.FindAllASliders(this); // Assuming 'this' refers to the current window
+            foreach (ASlider slider in allSliders)
+            {
+                slider.SubtractOne.Background = new SolidColorBrush(darkerColor);
+                slider.AddOne.Background = new SolidColorBrush(darkerColor);
+            }
+
+            List<AToggle> allToggles = AToggleFinder.FindAllAToggles(this); // Assuming 'this' refers to the current window
+            foreach (AToggle toggle in allToggles)
+            {
+                // Change the ToggleBorderColor property to the selected color
+                toggle.ToggleBorderColor = new SolidColorBrush(darkerColor);
+            }
+        }
+
+        public class ASliderFinder
+        {
+            public static List<ASlider> FindAllASliders(DependencyObject parent)
+            {
+                var sliders = new List<ASlider>();
+
+                // Check if the parent is an ASlider, then add it to the list
+                if (parent is ASlider slider)
+                {
+                    sliders.Add(slider);
+                }
+                else
+                {
+                    // If not, recursively search its children
+                    int childCount = VisualTreeHelper.GetChildrenCount(parent);
+                    for (int i = 0; i < childCount; i++)
+                    {
+                        DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                        sliders.AddRange(FindAllASliders(child));
+                    }
+                }
+
+                return sliders;
+            }
+        }
+
+        public class AToggleFinder
+        {
+            public static List<AToggle> FindAllAToggles(DependencyObject parent)
+            {
+                var toggles = new List<AToggle>();
+
+                // Check if the parent is an AToggle, then add it to the list
+                if (parent is AToggle toggle)
+                {
+                    toggles.Add(toggle);
+                }
+                else
+                {
+                    // If not, recursively search its children
+                    int childCount = VisualTreeHelper.GetChildrenCount(parent);
+                    for (int i = 0; i < childCount; i++)
+                    {
+                        DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                        toggles.AddRange(FindAllAToggles(child));
+                    }
+                }
+
+                return toggles;
+            }
+        }
+
+
+        private Color DarkenColor(Color originalColor, byte darkenAmount)
+        {
+            byte newR = (byte)Math.Max(originalColor.R - darkenAmount, 0);
+            byte newG = (byte)Math.Max(originalColor.G - darkenAmount, 0);
+            byte newB = (byte)Math.Max(originalColor.B - darkenAmount, 0);
+            return Color.FromArgb(originalColor.A, newR, newG, newB);
+        }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
         {

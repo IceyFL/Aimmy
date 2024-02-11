@@ -55,7 +55,7 @@
                                         </Style>
                                     </Rectangle.Style>
                                 </Rectangle>
-                                <Border Grid.ColumnSpan="2" BorderBrush="#712fc6" BorderThickness="2" CornerRadius="8" />
+                                <Border Name="ToggleBorder" Grid.ColumnSpan="2" BorderBrush="{Binding ToggleBorderColor, RelativeSource={RelativeSource AncestorType=UserControl}}" BorderThickness="2" CornerRadius="8" Background="Transparent" />
                                 <Ellipse Height="13" Width="13" StrokeThickness=".8" Name="spot" Grid.Column="1" HorizontalAlignment="Left" Margin="2.5,0,0,0">
                                     <Ellipse.Style>
                                         <Style TargetType="Ellipse">
@@ -68,7 +68,7 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Fill" TargetName="spot" Value="#712fc6"/>
+                                <Setter Property="Fill" TargetName="spot" Value="{Binding ToggleBorderColor, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

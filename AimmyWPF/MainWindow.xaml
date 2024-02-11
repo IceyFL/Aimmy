@@ -99,7 +99,7 @@
                         <Grid>
                             <Ellipse x:Name="LeftDot" Width="50" Height="50" Opacity="100" Margin="25,25,-25,335">
                                 <Ellipse.Fill>
-                                    <RadialGradientBrush>
+                                    <RadialGradientBrush x:Name="LeftDotGradient">
                                         <GradientStop Color="#712fc6" Offset="0"/>
                                         <GradientStop Color="#00000000" Offset="1"/>
                                     </RadialGradientBrush>
@@ -110,7 +110,7 @@
                             </Ellipse>
                             <Ellipse x:Name="RightDot" Width="50" Height="50" Opacity="100" Margin="-25,25,25,335">
                                 <Ellipse.Fill>
-                                    <RadialGradientBrush>
+                                    <RadialGradientBrush x:Name="RightDotGradient">
                                         <GradientStop Color="#712fc6" Offset="0"/>
                                         <GradientStop Color="#00000000" Offset="1"/>
                                     </RadialGradientBrush>
