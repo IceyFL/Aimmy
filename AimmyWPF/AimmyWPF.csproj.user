@@ -38,6 +38,9 @@
     <Page Update="UserController\AColorChanger.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserController\ADropdown.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Visualization\PlayerDetectionWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

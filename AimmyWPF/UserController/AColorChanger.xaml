@@ -24,7 +24,7 @@
                        FontSize="13"
                        Margin="0,0,115,0" />
                 <Border x:Name="ColorChangingBorder"
-                        Background="Red"
+                        Background="#712fc6"
                         HorizontalAlignment="Right"
                         Height="20"
                         Margin="0,0,30,0"

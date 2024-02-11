@@ -82,12 +82,12 @@ namespace AimmyWPF
             { "X_Offset", 0 },
             { "Trigger_Delay", 0.1 },
             { "AI_Min_Conf", 50 },
-            { "AimMethod", 0 },
+            { "AimMethod", "Closest Detection" },
             { "RecoilStrength", 10 },
             { "RecoilDelay", 200 },
             { "RecoilActivationDelay", 10 },
             { "AIFPS", 40 },
-            { "MouseMoveMethod", 0 }
+            { "MouseMoveMethod", "Mouse Event" }
         };
 
         private Dictionary<string, bool> toggleState = new()
@@ -104,7 +104,7 @@ namespace AimmyWPF
         // PDW == PlayerDetectionWindow
         public Dictionary<string, dynamic> OverlayProperties = new()
         {
-            { "FOV_Color", "#ff0000"},
+            { "FOV_Color", "#712fc6"},
             { "PDW_Size", 50 },
             { "PDW_CornerRadius", 0 },
             { "PDW_BorderThickness", 1 },
@@ -349,7 +349,9 @@ namespace AimmyWPF
 
         public async Task ModelCapture(bool TriggerOnly = false)
         {
-            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync((int)aimmySettings["AimMethod"]);
+            int AimMethod = 0;
+            if (aimmySettings["AimMethod"].Contains("Highest Confidence Detection")) { AimMethod = 1; }
+            var closestPrediction = await _onnxModel.GetClosestPredictionToCenterAsync((int)AimMethod);
             if (closestPrediction == null)
             {
                 return;
@@ -436,10 +438,9 @@ namespace AimmyWPF
                 if (elapsed.TotalMilliseconds > 1000.0 / aimmySettings["AIFPS"])
                 {
                     lastExecutionTime = DateTime.Now;
-                    if (toggleState["AimbotToggle"] && Bools.ConstantTracking == false)
+                    if (toggleState["AimbotToggle"] && Bools.ConstantTracking==false && IsHolding_Binding)
                     {
-                        if (IsHolding_Binding)
-                            await ModelCapture();
+                        await ModelCapture();
                     }
                     else if (toggleState["AimbotToggle"] && Bools.ConstantTracking)
                     {
@@ -467,11 +468,11 @@ namespace AimmyWPF
 
         private async Task mouseMove(int x, int y) 
         {
-            if (aimmySettings["MouseMoveMethod"] == 0)
+            if (aimmySettings["MouseMoveMethod"].Contains("Mouse Event"))
             {
                 mouse_event(MOUSEEVENTF_MOVE, (uint)x, (uint)y, 0, 0);
             }
-            else if (aimmySettings["MouseMoveMethod"] == 1)
+            else if (aimmySettings["MouseMoveMethod"].Contains("Logitech Mouse Driver"))
             {
                 CVE.Mouse.Move(0, x, y, 0);
             }
@@ -778,47 +779,6 @@ namespace AimmyWPF
 
              leftPanel.Children.Add(AIMinimumConfidence);
 
-
-            ASlider AimMethod = new("Aim Method", 1);
-
-            Dictionary<double, string> weaponNames = new Dictionary<double, string>
-            {
-                { 0, "Closest Detection" },
-                { 1, "Highest Conf Detection" }
-            };
-            AimMethod.Slider.Minimum = 0;
-            AimMethod.Slider.Maximum = 1;
-            AimMethod.Slider.Value = aimmySettings["AimMethod"];
-            AimMethod.Slider.TickFrequency = 1;
-            AimMethod.Slider.ValueChanged += (s, x) =>
-            AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
-            {
-                double method = AimMethod.Slider.Value;
-                aimmySettings["AimMethod"] = method;
-                AimMethod.AdjustNotifier.Content = weaponNames[AimMethod.Slider.Value];
-            };
-
-            ASlider MouseMethodSlider = new("Mouse Movement", 1);
-
-            Dictionary<double, string> MouseMoveMethod = new Dictionary<double, string>
-            {
-                { 0, "Mouse Event" },
-                { 1, "Logitech Mouse Driver" }
-            };
-            MouseMethodSlider.Slider.Minimum = 0;
-            MouseMethodSlider.Slider.Maximum = 1;
-            MouseMethodSlider.Slider.Value = 0;
-            MouseMethodSlider.AdjustNotifier.Content = MouseMoveMethod[MouseMethodSlider.Slider.Value];
-            MouseMethodSlider.Slider.TickFrequency = 1;
-            MouseMethodSlider.Slider.ValueChanged += (s, x) =>
-            {
-                double method = MouseMethodSlider.Slider.Value;
-                aimmySettings["MouseMoveMethod"] = method;
-                MouseMethodSlider.AdjustNotifier.Content = MouseMoveMethod[MouseMethodSlider.Slider.Value];
-            };
-
-            leftPanel.Children.Add(MouseMethodSlider);
-
             ASlider FPS = new("AI FPS", 1);
 
             FPS.Slider.Minimum = 0;
@@ -870,6 +830,37 @@ namespace AimmyWPF
             leftPanel.Children.Add(Enable_AIPredictions);
 
             rightPanel.Children.Add(new ALabel("Aim Config"));
+
+            List<string> MouseMoveMethod = new List<string>
+            {
+                { "Mouse Event" },
+                { "Logitech Mouse Driver" }
+            };
+
+            ADropdown MouseMethod = new("Mouse Movement", MouseMoveMethod);
+
+            MouseMethod.DropdownBox.SelectionChanged += (s, x) =>
+            {
+                aimmySettings["MouseMoveMethod"] = MouseMethod.DropdownBox.SelectedItem.ToString();
+            };
+
+            rightPanel.Children.Add(MouseMethod);
+
+            List<string> MouseDrivers = new List<string>
+            {
+                { "Closest Detection" },
+                { "Highest Confidence Detection" }
+            };
+
+            ADropdown AimMethod = new("Aim Method", MouseDrivers);
+
+            AimMethod.DropdownBox.SelectionChanged += (s, x) =>
+            {
+                aimmySettings["AimMethod"] = AimMethod.DropdownBox.SelectedItem.ToString();
+            };
+
+            rightPanel.Children.Add(AimMethod);
+
 
             ASlider MouseSensitivtyX = new ASlider("Mouse Sensitivity X", 0.01);
 
