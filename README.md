@@ -1,4 +1,6 @@
 # Undetected Aimmy
+![image](https://github.com/IceyFL/Undetected-Aimmy/assets/82657910/16805e52-88a4-49a9-988b-71d1faeee0aa)
+
 
 This is a modified version of [Aimmy](https://github.com/Babyhamsta/Aimmy)
 It is modified in a way that it should be undetectable as it now has a constantly changing title.
