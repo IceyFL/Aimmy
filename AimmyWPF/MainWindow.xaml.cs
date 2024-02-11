@@ -50,10 +50,12 @@ namespace AimmyWPF
         public bool Key2Change = false;
         public bool RecoilKeyChange = false;
         public bool RecoilToggleKeyChange = false;
+        public bool ToggleKeyChange = false;
         string key1 = "Right";
         string key2 = "Left";
         string RecoilKey = "Left";
         string RecoilToggleKey = "P";
+        string ToggleKey = "O";
         private CancellationTokenSource cts;
 
         private enum MenuPosition
@@ -116,7 +118,9 @@ namespace AimmyWPF
         AKeyChanger RecoilToggleKeyChanger;
         AKeyChanger Change_KeyPress;
         AKeyChanger Change_KeyPress2;
+        AKeyChanger ToggleKeyChanger;
         AToggle RecoilState;
+        AToggle Enable_AIAimAligner;
 
         private Thickness WinTooLeft = new(-1680, 0, 1680, 0);
         private Thickness WinVeryLeft = new(-1120, 0, 1120, 0);
@@ -181,11 +185,13 @@ namespace AimmyWPF
                 {
                     KeyDown.Add(binding);
                     if (binding == RecoilToggleKey){ ToggleRecoil(); }
+                    else if (binding == ToggleKey) { ToggleAim(); }
                 }
                 if (Key1Change) { key1 = binding; Key1Change = false; Change_KeyPress.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress, binding); }
                 else if (Key2Change) { key2 = binding; Key2Change = false; Change_KeyPress2.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress2, binding); }
                 else if (RecoilKeyChange) { RecoilKey = binding; RecoilKeyChange = false; RecoilKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilKeyChanger, binding); }
                 else if (RecoilToggleKeyChange) { RecoilToggleKey = binding; RecoilToggleKeyChange = false; RecoilToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilToggleKeyChanger, binding); }
+                else if (ToggleKeyChange) { ToggleKey = binding; ToggleKeyChange = false; ToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(ToggleKeyChanger, binding); }
             };
             bindingManager.OnBindingReleased += (binding) => { try { KeyDown.Remove(binding); } catch {} };
 
@@ -238,6 +244,11 @@ namespace AimmyWPF
         private void ToggleRecoil() 
         {
             RecoilState.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        }
+
+        private void ToggleAim()
+        {
+            Enable_AIAimAligner.Reader.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -750,7 +761,7 @@ namespace AimmyWPF
             leftPanel.Children.Add(new ALabel("Aim Assist"));
 
 
-            AToggle Enable_AIAimAligner = new("Aim Assist");
+            Enable_AIAimAligner = new("Aim Assist");
             Enable_AIAimAligner.Reader.Name = "AimbotToggle";
             SetupToggle(Enable_AIAimAligner, state => Bools.AIAimAligner = state, Bools.AIAimAligner);
             leftPanel.Children.Add(Enable_AIAimAligner);
@@ -801,7 +812,7 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(FPS);
 
-            Change_KeyPress = new("Change Keybind", "Right");
+            Change_KeyPress = new("Aim Keybind", "Right");
             Change_KeyPress.Reader.Click += (s, x) =>
             {
                 Change_KeyPress.KeyNotifier.Content = "Listening..";
@@ -818,7 +829,7 @@ namespace AimmyWPF
             leftPanel.Children.Add(SecondKey);
 
 
-            Change_KeyPress2 = new("Change Keybind", "Left");
+            Change_KeyPress2 = new("Second Aim Keybind", "Left");
             Change_KeyPress2.Reader.Click += (s, x) =>
             {
                 Change_KeyPress2.KeyNotifier.Content = "Listening..";
@@ -838,6 +849,17 @@ namespace AimmyWPF
             Enable_AIPredictions.Reader.Name = "PredictionToggle";
             SetupToggle(Enable_AIPredictions, state => Bools.AIPredictions = state, Bools.AIPredictions);
             leftPanel.Children.Add(Enable_AIPredictions);
+
+            ToggleKeyChanger = new("Aim Toggle Keybind", "O");
+            ToggleKeyChanger.Reader.Click += (s, x) =>
+            {
+                ToggleKeyChanger.KeyNotifier.Content = "Listening..";
+                Change_Keysize(ToggleKeyChanger, "Listening..");
+                ToggleKeyChange = true;
+            };
+
+            leftPanel.Children.Add(ToggleKeyChanger);
+
 
             rightPanel.Children.Add(new ALabel("Aim Config"));
 
@@ -1207,6 +1229,7 @@ namespace AimmyWPF
             Change_Keysize(Change_KeyPress2, "Left");
             Change_Keysize(RecoilKeyChanger, "Left");
             Change_Keysize(RecoilToggleKeyChanger, "P");
+            Change_Keysize(ToggleKeyChanger, "O");
 
         }
 

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Babyhamsta")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee2b88dfde1aa6a4b739ab4d6551d956710cb30a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7eaaddadff17bfc1adbd0717f54c4136b6d971c4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Twitter")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Twitter")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
