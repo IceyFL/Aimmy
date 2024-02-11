@@ -8,7 +8,7 @@ namespace AimmyWPF.UserController
     /// </summary>
     public partial class ASlider : UserControl
     {
-        public ASlider(string Text, double ButtonSteps)
+        public ASlider(string Text, double ButtonSteps, string valuename)
         {
             InitializeComponent();
             Title.Content = Text;
@@ -16,7 +16,7 @@ namespace AimmyWPF.UserController
             Slider.ValueChanged += (s, e) =>
             {
                 if (AdjustNotifier != null)
-                    AdjustNotifier.Content = $"{Slider.Value.ToString()}";
+                    AdjustNotifier.Content = $"{Slider.Value.ToString()} {valuename}";
 
                 // Added by Nori
                 Slider.Value = Math.Round(Slider.Value, 2);

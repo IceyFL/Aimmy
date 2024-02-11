@@ -22,12 +22,13 @@
                        Padding="10,0,0,0"
                        FontSize="13"
                        Margin="0,0,115,0" />
-                <Border Background="#1E1E1E"
-                        BorderBrush="#1E1E1E"
+                <Border Background="#001E1E1E"
+                        BorderBrush="#50FFFFFF"
                         BorderThickness="1"
                         Width="70"
                         HorizontalAlignment="Right"
-                        Margin="0,5,5,5"
+                        Margin="0,4,5,4"
+                        Name="Box"
                         CornerRadius="3">
                     <Label x:Name="KeyNotifier"
                            Foreground="White"

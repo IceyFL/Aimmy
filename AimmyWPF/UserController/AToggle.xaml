@@ -81,7 +81,7 @@
                 BorderBrush="#001E1E1E"
                 BorderThickness="2"
                 CornerRadius="5"
-                Margin="0,0,0,5">
+                Margin="0,0,0,10">
             <Grid>
                 <Label x:Name="Title"
                        Foreground="White"

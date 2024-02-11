@@ -132,7 +132,7 @@ namespace SecondaryWindows {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Twitter;component/secondarywindows/configsaver.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Twitter;V1.0.0.0;component/secondarywindows/configsaver.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\SecondaryWindows\ConfigSaver.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

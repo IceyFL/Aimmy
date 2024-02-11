@@ -182,10 +182,10 @@ namespace AimmyWPF
                     KeyDown.Add(binding);
                     if (binding == RecoilToggleKey){ ToggleRecoil(); }
                 }
-                if (Key1Change) { key1 = binding; Key1Change = false; Change_KeyPress.KeyNotifier.Content = binding; }
-                else if (Key2Change) { key2 = binding; Key2Change = false; Change_KeyPress2.KeyNotifier.Content = binding; }
-                else if (RecoilKeyChange) { RecoilKey = binding; RecoilKeyChange = false; RecoilKeyChanger.KeyNotifier.Content = binding; }
-                else if (RecoilToggleKeyChange) { RecoilToggleKey = binding; RecoilToggleKeyChange = false; RecoilToggleKeyChanger.KeyNotifier.Content = binding; }
+                if (Key1Change) { key1 = binding; Key1Change = false; Change_KeyPress.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress, binding); }
+                else if (Key2Change) { key2 = binding; Key2Change = false; Change_KeyPress2.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress2, binding); }
+                else if (RecoilKeyChange) { RecoilKey = binding; RecoilKeyChange = false; RecoilKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilKeyChanger, binding); }
+                else if (RecoilToggleKeyChange) { RecoilToggleKey = binding; RecoilToggleKeyChange = false; RecoilToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilToggleKeyChanger, binding); }
             };
             bindingManager.OnBindingReleased += (binding) => { try { KeyDown.Remove(binding); } catch {} };
 
@@ -226,6 +226,14 @@ namespace AimmyWPF
 
         private HashSet<string> AvailableModels = new();
         private HashSet<string> AvailableConfigs = new();
+
+        private void Change_Keysize(AKeyChanger Current, string Key) 
+        {
+            int Width = 20;
+            int bindingwidth = Key.Length * 6;
+            Width = Width + bindingwidth;
+            Current.Box.Width = Width;
+        }
 
         private void ToggleRecoil() 
         {
@@ -752,7 +760,7 @@ namespace AimmyWPF
             SetupToggle(Enable_ConstantAITracking, state => Bools.ConstantTracking = state, Bools.ConstantTracking);
             leftPanel.Children.Add(Enable_ConstantAITracking);
 
-            ASlider AIMinimumConfidence = new("AI Minimum Confidence", 1);
+            ASlider AIMinimumConfidence = new("AI Minimum Confidence", 1, "confidence");
 
             AIMinimumConfidence.Slider.Minimum = 1;
             AIMinimumConfidence.Slider.Maximum = 100;
@@ -779,7 +787,7 @@ namespace AimmyWPF
 
              leftPanel.Children.Add(AIMinimumConfidence);
 
-            ASlider FPS = new("AI FPS", 1);
+            ASlider FPS = new("AI FPS", 1, "FPS");
 
             FPS.Slider.Minimum = 0;
             FPS.Slider.Maximum = 200;
@@ -797,6 +805,7 @@ namespace AimmyWPF
             Change_KeyPress.Reader.Click += (s, x) =>
             {
                 Change_KeyPress.KeyNotifier.Content = "Listening..";
+                Change_Keysize(Change_KeyPress, "Listening..");
                 Key1Change = true;
             };
 
@@ -813,6 +822,7 @@ namespace AimmyWPF
             Change_KeyPress2.Reader.Click += (s, x) =>
             {
                 Change_KeyPress2.KeyNotifier.Content = "Listening..";
+                Change_Keysize(Change_KeyPress2, "Listening..");
                 Key2Change = true;
             };
 
@@ -862,7 +872,7 @@ namespace AimmyWPF
             rightPanel.Children.Add(AimMethod);
 
 
-            ASlider MouseSensitivtyX = new ASlider("Mouse Sensitivity X", 0.01);
+            ASlider MouseSensitivtyX = new ASlider("Mouse Sensitivity X", 0.01, "Sens");
 
             MouseSensitivtyX.Slider.Minimum = 0.01;
             MouseSensitivtyX.Slider.Maximum = 1;
@@ -875,7 +885,7 @@ namespace AimmyWPF
 
             rightPanel.Children.Add(MouseSensitivtyX);
 
-            ASlider MouseSensitivtyY = new ASlider("Mouse Sensitivity Y", 0.01);
+            ASlider MouseSensitivtyY = new ASlider("Mouse Sensitivity Y", 0.01, "Sens");
 
             MouseSensitivtyY.Slider.Minimum = 0.01;
             MouseSensitivtyY.Slider.Maximum = 1;
@@ -888,7 +898,7 @@ namespace AimmyWPF
 
             rightPanel.Children.Add(MouseSensitivtyY);
 
-            ASlider MouseJitter = new("Mouse Jitter", 0.01);
+            ASlider MouseJitter = new("Mouse Jitter", 0.01, "Jitter");
 
             MouseJitter.Slider.Minimum = 0;
             MouseJitter.Slider.Maximum = 15;
@@ -900,7 +910,7 @@ namespace AimmyWPF
             };
             rightPanel.Children.Add(MouseJitter);
 
-            ASlider YOffset = new("Y Offset (Up/Down)", 1);
+            ASlider YOffset = new("Y Offset (Up/Down)", 1, "Offset");
 
             YOffset.Slider.Minimum = -150;
             YOffset.Slider.Maximum = 150;
@@ -913,7 +923,7 @@ namespace AimmyWPF
 
             rightPanel.Children.Add(YOffset);
 
-            ASlider XOffset = new("X Offset (Left/Right)", 1);
+            ASlider XOffset = new("X Offset (Left/Right)", 1, "Offset");
 
             XOffset.Slider.Minimum = -150;
             XOffset.Slider.Maximum = 150;
@@ -935,7 +945,7 @@ namespace AimmyWPF
             SetupToggle(Enable_TriggerBot, state => Bools.Triggerbot = state, Bools.Triggerbot);
             leftPanel1.Children.Add(Enable_TriggerBot);
 
-            ASlider TriggerBot_Delay = new("Auto Trigger Delay", 0.1);
+            ASlider TriggerBot_Delay = new("Auto Trigger Delay", 0.1, "ms");
 
             TriggerBot_Delay.Slider.Minimum = 0.01;
             TriggerBot_Delay.Slider.Maximum = 1;
@@ -958,7 +968,7 @@ namespace AimmyWPF
             SetupToggle(RecoilState, state => Bools.Recoil = state, Bools.Recoil);
             leftPanel2.Children.Add(RecoilState);
 
-            ASlider RecoilStrength = new("Anti Recoil Strength", 1);
+            ASlider RecoilStrength = new("Anti Recoil Strength", 1, "Strength");
 
             RecoilStrength.Slider.Minimum = 1;
             RecoilStrength.Slider.Maximum = 50;
@@ -976,6 +986,7 @@ namespace AimmyWPF
             RecoilKeyChanger.Reader.Click += (s, x) =>
             {
                 RecoilKeyChanger.KeyNotifier.Content = "Listening..";
+                Change_Keysize(RecoilKeyChanger, "Listening..");
                 RecoilKeyChange = true;
             };
 
@@ -985,12 +996,13 @@ namespace AimmyWPF
             RecoilToggleKeyChanger.Reader.Click += (s, x) =>
             {
                 RecoilToggleKeyChanger.KeyNotifier.Content = "Listening..";
+                Change_Keysize(RecoilToggleKeyChanger, "Listening..");
                 RecoilToggleKeyChange = true;
             };
 
             leftPanel2.Children.Add(RecoilToggleKeyChanger);
 
-            ASlider RecoilDelay = new("Fire Rate(ms)", 1);
+            ASlider RecoilDelay = new("Fire Rate", 1, "ms");
 
             RecoilDelay.Slider.Minimum = 1;
             RecoilDelay.Slider.Maximum = 2000;
@@ -1004,7 +1016,7 @@ namespace AimmyWPF
 
             leftPanel2.Children.Add(RecoilDelay);
 
-            ASlider RecoilActivationDelay = new("Activation Delay(ms)", 1);
+            ASlider RecoilActivationDelay = new("Activation Delay", 1, "ms");
 
             RecoilActivationDelay.Slider.Minimum = 1;
             RecoilActivationDelay.Slider.Maximum = 2000;
@@ -1048,7 +1060,7 @@ namespace AimmyWPF
             };
             rightPanel1.Children.Add(Change_FOVColor);
 
-            ASlider FovSlider = new("FOV Size", 1);
+            ASlider FovSlider = new("FOV Size", 1, "");
 
             FovSlider.Slider.Minimum = 10;
             FovSlider.Slider.Maximum = 640;
@@ -1105,7 +1117,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(new ALabel("Visual Debugging Customization"));
 
-            ASlider Change_PDW_Size = new("Detection Window Size", 1);
+            ASlider Change_PDW_Size = new("Detection Window Size", 1, "");
 
             Change_PDW_Size.Slider.Minimum = 10;
             Change_PDW_Size.Slider.Maximum = 100;
@@ -1120,7 +1132,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(Change_PDW_Size);
 
-            ASlider Change_PDW_CornerRadius = new("Detection Window Corner Radius", 1);
+            ASlider Change_PDW_CornerRadius = new("Detection Window Corner Radius", 1, "px");
 
             Change_PDW_CornerRadius.Slider.Minimum = 0;
             Change_PDW_CornerRadius.Slider.Maximum = 100;
@@ -1135,7 +1147,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(Change_PDW_CornerRadius);
 
-            ASlider Change_PDW_BorderThickness = new("Detection Window Border Thickness", 1);
+            ASlider Change_PDW_BorderThickness = new("Detection Window Border Thickness", 1, "px");
 
             Change_PDW_BorderThickness.Slider.Minimum = 0.1;
             Change_PDW_BorderThickness.Slider.Maximum = 10;
@@ -1150,7 +1162,7 @@ namespace AimmyWPF
 
             rightPanel3.Children.Add(Change_PDW_BorderThickness);
 
-            ASlider Change_PDW_Opacity = new("Detection Window Opacity", 0.1);
+            ASlider Change_PDW_Opacity = new("Detection Window Opacity", 0.1, "");
 
             Change_PDW_Opacity.Slider.Minimum = 0;
             Change_PDW_Opacity.Slider.Maximum = 1;
@@ -1189,6 +1201,12 @@ namespace AimmyWPF
             leftPanelsStack.VerticalAlignment = VerticalAlignment.Top;
             Grid.SetColumn(leftPanelsStack, 0);
             AimScroller.Children.Add(leftPanelsStack);
+
+
+            Change_Keysize(Change_KeyPress, "Right");
+            Change_Keysize(Change_KeyPress2, "Left");
+            Change_Keysize(RecoilKeyChanger, "Left");
+            Change_Keysize(RecoilToggleKeyChanger, "P");
 
         }
 
