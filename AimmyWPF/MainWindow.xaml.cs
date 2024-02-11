@@ -86,6 +86,7 @@ namespace AimmyWPF
             { "AI_Min_Conf", 50 },
             { "AimMethod", "Closest Detection" },
             { "RecoilStrength", 10 },
+            { "RecoilStrengthX", 0 },
             { "RecoilDelay", 200 },
             { "RecoilActivationDelay", 10 },
             { "AIFPS", 40 },
@@ -508,12 +509,12 @@ namespace AimmyWPF
                 {
                     while (RecoilKeyHeld)
                     {
-                        await mouseMove(0, (int)aimmySettings["RecoilStrength"]);
+                        await mouseMove((int)aimmySettings["RecoilStrengthX"], (int)aimmySettings["RecoilStrength"]);
                         await Task.Delay((int)aimmySettings["RecoilDelay"]);
                         RecoilKeyHeld = (KeyDown.Contains(RecoilKey));
                     }
                 }
-                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Random random = new Random();
                     int randomNumber = random.Next(1, 10000);
@@ -990,20 +991,6 @@ namespace AimmyWPF
             SetupToggle(RecoilState, state => Bools.Recoil = state, Bools.Recoil);
             leftPanel2.Children.Add(RecoilState);
 
-            ASlider RecoilStrength = new("Anti Recoil Strength", 1, "Strength");
-
-            RecoilStrength.Slider.Minimum = 1;
-            RecoilStrength.Slider.Maximum = 50;
-            RecoilStrength.Slider.Value = aimmySettings["RecoilStrength"];
-            RecoilStrength.Slider.TickFrequency = 1;
-            RecoilStrength.Slider.ValueChanged += (s, x) =>
-            {
-                double method = RecoilStrength.Slider.Value;
-                aimmySettings["RecoilStrength"] = method;
-            };
-
-            leftPanel2.Children.Add(RecoilStrength);
-
             RecoilKeyChanger = new("Recoil Keybind", "Left");
             RecoilKeyChanger.Reader.Click += (s, x) =>
             {
@@ -1021,6 +1008,34 @@ namespace AimmyWPF
                 Change_Keysize(RecoilToggleKeyChanger, "Listening..");
                 RecoilToggleKeyChange = true;
             };
+
+            ASlider RecoilStrength = new("Y Recoil (Up/Down)", 1, "Strength");
+
+            RecoilStrength.Slider.Minimum = 1;
+            RecoilStrength.Slider.Maximum = 50;
+            RecoilStrength.Slider.Value = aimmySettings["RecoilStrength"];
+            RecoilStrength.Slider.TickFrequency = 1;
+            RecoilStrength.Slider.ValueChanged += (s, x) =>
+            {
+                double method = RecoilStrength.Slider.Value;
+                aimmySettings["RecoilStrength"] = method;
+            };
+
+            leftPanel2.Children.Add(RecoilStrength);
+
+            ASlider RecoilStrengthX = new("X Recoil (Sideways)", 1, "Strength");
+
+            RecoilStrengthX.Slider.Minimum = -50;
+            RecoilStrengthX.Slider.Maximum = 50;
+            RecoilStrengthX.Slider.Value = aimmySettings["RecoilStrengthX"];
+            RecoilStrengthX.Slider.TickFrequency = 1;
+            RecoilStrengthX.Slider.ValueChanged += (s, x) =>
+            {
+                double method = RecoilStrengthX.Slider.Value;
+                aimmySettings["RecoilStrengthX"] = method;
+            };
+
+            leftPanel2.Children.Add(RecoilStrengthX);
 
             leftPanel2.Children.Add(RecoilToggleKeyChanger);
 
