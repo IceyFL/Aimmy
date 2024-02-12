@@ -84,7 +84,7 @@ namespace AimmyWPF.UserController {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Twitter;component/usercontroller/akeychanger.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Twitter;V1.0.0.0;component/usercontroller/akeychanger.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\UserController\AKeyChanger.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

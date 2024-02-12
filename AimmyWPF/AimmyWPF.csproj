@@ -123,5 +123,45 @@
     <Resource Include="Images\SelectorMenu.png" />
     <Resource Include="Images\SettingsMenu.png" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.pdb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
   
 </Project>

@@ -204,7 +204,7 @@
                             </Grid.ColumnDefinitions>
                         </Grid>
                     </ScrollViewer>
-                    <ScrollViewer x:Name="MiscMenu"
+                    <ScrollViewer x:Name="SelectorMenu"
                                   VerticalScrollBarVisibility="Hidden"
                                   PanningMode="VerticalOnly"
                                   Visibility="Collapsed">
@@ -220,7 +220,7 @@
                             </Grid.ColumnDefinitions>
                         </Grid>
                     </ScrollViewer>
-                    <Grid x:Name="SelectorMenu"
+                    <Grid x:Name="MiscMenu"
                           Visibility="Collapsed">
                         <TabControl HorizontalContentAlignment="Left">
                             <TabItem BorderThickness="0"
@@ -232,9 +232,9 @@
                                                Foreground="White" />
                                 </TabItem.Header>
                                 <Grid>
-                                    <Border Background="#FF191919"
-                                            BorderBrush="#FF1E1E1E"
-                                            BorderThickness="2"
+                                    <Border Background="#3F3C3C3C"
+                                            BorderBrush="#3FFFFFFF"
+                                            BorderThickness="1"
                                             CornerRadius="5"
                                             Margin="0,0,0,44">
                                         <ListBox x:Name="SelectorListBox"
@@ -244,9 +244,9 @@
                                                  Padding="2">
                                         </ListBox>
                                     </Border>
-                                    <Border Background="#FF191919"
-                                            BorderBrush="#FF1E1E1E"
-                                            BorderThickness="2"
+                                    <Border Background="#3F3C3C3C"
+                                            BorderBrush="#3FFFFFFF"
+                                            BorderThickness="1"
                                             CornerRadius="5"
                                             Margin="0,0,0,0"
                                             VerticalAlignment="Bottom"
@@ -268,8 +268,8 @@
                                                Foreground="White" />
                                 </TabItem.Header>
                                 <Grid>
-                                    <Border Background="#FF191919"
-                                            BorderBrush="#FF1E1E1E"
+                                    <Border Background="#3F3C3C3C"
+                                            BorderBrush="#3FFFFFFF"
                                             BorderThickness="2"
                                             CornerRadius="5"
                                             Margin="0,0,0,44">
@@ -279,8 +279,8 @@
                                                  Margin="0"
                                                  Padding="2" />
                                     </Border>
-                                    <Border Background="#FF191919"
-                                            BorderBrush="#FF1E1E1E"
+                                    <Border Background="#3F3C3C3C"
+                                            BorderBrush="#3FFFFFFF"
                                             BorderThickness="2"
                                             CornerRadius="5"
                                             Margin="0,0,0,0"

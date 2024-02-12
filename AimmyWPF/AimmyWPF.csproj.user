@@ -32,6 +32,9 @@
     <Page Update="UserController\ADownloadGateway.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="UserController\AFilePicker.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="UserController\AInfoSection.xaml">
       <SubType>Designer</SubType>
     </Page>

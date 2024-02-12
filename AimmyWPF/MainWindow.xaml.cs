@@ -31,6 +31,7 @@ namespace AimmyWPF
         private FileSystemWatcher ConfigfileWatcher;
 
         private string lastLoadedModel = "N/A";
+        private string modelSwitchModel = "N/A";
         private string lastLoadedConfig = "N/A";
 
         private readonly BrushConverter brushcolor = new();
@@ -42,8 +43,8 @@ namespace AimmyWPF
         private const uint MOUSEEVENTF_LEFTUP = 0x0004;
         private const uint MOUSEEVENTF_MOVE = 0x0001; // Movement flag
 
-        private static int ScreenWidth = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
-        private static int ScreenHeight = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+        private static int ScreenWidth = Screen.PrimaryScreen.Bounds.Width;
+        private static int ScreenHeight = Screen.PrimaryScreen.Bounds.Height;
 
         private AIModel _onnxModel;
         private InputBindingManager bindingManager;
@@ -52,11 +53,13 @@ namespace AimmyWPF
         public bool RecoilKeyChange = false;
         public bool RecoilToggleKeyChange = false;
         public bool ToggleKeyChange = false;
+        public bool ModelSwitchKeyChange = false;
         string key1 = "Right";
         string key2 = "Left";
         string RecoilKey = "Left";
         string RecoilToggleKey = "P";
         string ToggleKey = "O";
+        string ModelSwitchKey = "L";
         private CancellationTokenSource cts;
 
         private enum MenuPosition
@@ -102,6 +105,7 @@ namespace AimmyWPF
             { "AimViewToggle", false },
             { "TriggerBot", false },
             { "CollectData", false },
+            { "ModelSwitch", false },
             { "TopMost", false }
         };
 
@@ -122,6 +126,7 @@ namespace AimmyWPF
         AKeyChanger Change_KeyPress;
         AKeyChanger Change_KeyPress2;
         AKeyChanger ToggleKeyChanger;
+        AKeyChanger ModelSwitchKeyChanger;
         AToggle RecoilState;
         AToggle Enable_AIAimAligner;
 
@@ -188,13 +193,15 @@ namespace AimmyWPF
                 {
                     KeyDown.Add(binding);
                     if (binding == RecoilToggleKey){ ToggleRecoil(); }
-                    else if (binding == ToggleKey) { ToggleAim(); }
+                    else if (binding == ToggleKey) { if (Bools.AIAimAligner) { ToggleAim(); } }
+                    else if (binding == ModelSwitchKey && toggleState["ModelSwitch"] == true) { ModelSwitch(); }
                 }
                 if (Key1Change) { key1 = binding; Key1Change = false; Change_KeyPress.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress, binding); }
                 else if (Key2Change) { key2 = binding; Key2Change = false; Change_KeyPress2.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress2, binding); }
                 else if (RecoilKeyChange) { RecoilKey = binding; RecoilKeyChange = false; RecoilKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilKeyChanger, binding); }
                 else if (RecoilToggleKeyChange) { RecoilToggleKey = binding; RecoilToggleKeyChange = false; RecoilToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilToggleKeyChanger, binding); }
                 else if (ToggleKeyChange) { ToggleKey = binding; ToggleKeyChange = false; ToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(ToggleKeyChanger, binding); }
+                else if (ModelSwitchKeyChange) { ModelSwitchKey = binding; ModelSwitchKeyChange= false; ModelSwitchKeyChanger.KeyNotifier.Content = binding; Change_Keysize(ModelSwitchKeyChanger, binding); }
             };
             bindingManager.OnBindingReleased += (binding) => { try { KeyDown.Remove(binding); } catch {} };
 
@@ -289,6 +296,9 @@ namespace AimmyWPF
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
+
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr LoadLibrary(string dllToLoad);
 
         private static Random MouseRandom = new();
 
@@ -500,6 +510,7 @@ namespace AimmyWPF
             }
         }
 
+
         private async Task RecoilLoop()
         {
             cts = new CancellationTokenSource();
@@ -544,7 +555,7 @@ namespace AimmyWPF
         {
             AimMenu.Margin = new Thickness(0, 0, 0, 0);
             MiscMenu.Margin = new Thickness(560, 0, -560, 0);
-            SelectorMenu.Margin = new Thickness(560, 0, -560, 0);
+            SelectorMenu.Margin = new Thickness(1120, 0, -1120, 0);
             SettingsMenu.Margin = new Thickness(1680, 0, -1680, 0);
         }
 
@@ -774,33 +785,6 @@ namespace AimmyWPF
             SetupToggle(Enable_ConstantAITracking, state => Bools.ConstantTracking = state, Bools.ConstantTracking);
             leftPanel.Children.Add(Enable_ConstantAITracking);
 
-            ASlider AIMinimumConfidence = new("AI Minimum Confidence", 1, "confidence");
-
-            AIMinimumConfidence.Slider.Minimum = 1;
-            AIMinimumConfidence.Slider.Maximum = 100;
-            AIMinimumConfidence.Slider.Value = aimmySettings["AI_Min_Conf"];
-            AIMinimumConfidence.Slider.TickFrequency = 1;
-            AIMinimumConfidence.Slider.ValueChanged += (s, x) =>
-            {
-                if (lastLoadedModel != "N/A")
-                {
-                    double ConfVal = ((double)AIMinimumConfidence.Slider.Value);
-                    aimmySettings["AI_Min_Conf"] = ConfVal;
-                    _onnxModel.ConfidenceThreshold = (float)(ConfVal / 100.0f);
-                }
-                else
-                {
-                    // Prevent double messageboxes..
-                    if (AIMinimumConfidence.Slider.Value != aimmySettings["AI_Min_Conf"])
-                    {
-                        System.Windows.Forms.MessageBox.Show("Unable to set confidence, please select a model and try again.", "Slider Error");
-                        AIMinimumConfidence.Slider.Value = aimmySettings["AI_Min_Conf"];
-                    }
-                }
-            };
-
-             leftPanel.Children.Add(AIMinimumConfidence);
-
             ASlider FPS = new("AI FPS", 1, "FPS");
 
             FPS.Slider.Minimum = 0;
@@ -853,7 +837,7 @@ namespace AimmyWPF
             SetupToggle(Enable_AIPredictions, state => Bools.AIPredictions = state, Bools.AIPredictions);
             leftPanel.Children.Add(Enable_AIPredictions);
 
-            ToggleKeyChanger = new("Aim Toggle Keybind", "O");
+            ToggleKeyChanger = new("Emergency Stop Keybind", "O");
             ToggleKeyChanger.Reader.Click += (s, x) =>
             {
                 ToggleKeyChanger.KeyNotifier.Content = "Listening..";
@@ -863,23 +847,24 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(ToggleKeyChanger);
 
+            AToggle ModelSwitchEnabled = new("Enable Model Switching");
+            ModelSwitchEnabled.Reader.Name = "SecondKey";
+            SetupToggle(ModelSwitchEnabled, state => toggleState["ModelSwitch"] = state, toggleState["ModelSwitch"]);
+
+            leftPanel.Children.Add(ModelSwitchEnabled);
+
+            ModelSwitchKeyChanger = new("Model Switch Keybind", "L");
+            ModelSwitchKeyChanger.Reader.Click += (s, x) =>
+            {
+                ModelSwitchKeyChanger.KeyNotifier.Content = "Listening..";
+                Change_Keysize(ModelSwitchKeyChanger, "Listening..");
+                ModelSwitchKeyChange = true;
+            };
+
+            leftPanel.Children.Add(ModelSwitchKeyChanger);
+
 
             rightPanel.Children.Add(new ALabel("Aim Config"));
-
-            List<string> MouseMoveMethod = new List<string>
-            {
-                { "Mouse Event" },
-                { "Logitech Mouse Driver" }
-            };
-
-            ADropdown MouseMethod = new("Mouse Movement", MouseMoveMethod);
-
-            MouseMethod.DropdownBox.SelectionChanged += (s, x) =>
-            {
-                aimmySettings["MouseMoveMethod"] = MouseMethod.DropdownBox.SelectedItem.ToString();
-            };
-
-            rightPanel.Children.Add(MouseMethod);
 
             List<string> MouseDrivers = new List<string>
             {
@@ -887,7 +872,7 @@ namespace AimmyWPF
                 { "Highest Confidence Detection" }
             };
 
-            ADropdown AimMethod = new("Aim Method", MouseDrivers);
+            ADropdown AimMethod = new("Detection Area Type", MouseDrivers);
 
             AimMethod.DropdownBox.SelectionChanged += (s, x) =>
             {
@@ -1089,7 +1074,7 @@ namespace AimmyWPF
             Change_FOVColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString(OverlayProperties["FOV_Color"]);
             Change_FOVColor.Reader.Click += (s, x) =>
             {
-                System.Windows.Forms.ColorDialog colorDialog = new();
+                ColorDialog colorDialog = new();
                 if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     Change_FOVColor.ColorChangingBorder.Background = new SolidColorBrush(Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B));
@@ -1247,6 +1232,7 @@ namespace AimmyWPF
             Change_Keysize(RecoilKeyChanger, "Left");
             Change_Keysize(RecoilToggleKeyChanger, "P");
             Change_Keysize(ToggleKeyChanger, "O");
+            Change_Keysize(ModelSwitchKeyChanger, "L");
 
         }
 
@@ -1254,7 +1240,66 @@ namespace AimmyWPF
         {
             SectionPanel leftPanel = new SectionPanel();
 
-            AButton SaveConfigSystem = new("Save Current Config",
+            leftPanel.Children.Add(new ALabel("Settings Menu"));
+
+            AToggle CollectDataWhilePlaying = new("Collect Data While Playing");
+            CollectDataWhilePlaying.Reader.Name = "CollectData";
+            SetupToggle(CollectDataWhilePlaying, state => Bools.CollectDataWhilePlaying = state, Bools.CollectDataWhilePlaying);
+            leftPanel.Children.Add(CollectDataWhilePlaying);
+
+
+            List<string> MouseMoveMethod = new List<string>
+            {
+                { "Mouse Event" },
+                { "Logitech Mouse Driver" }
+            };
+
+            ADropdown MouseMethod = new("Mouse Movement Method", MouseMoveMethod);
+
+            MouseMethod.DropdownBox.SelectionChanged += (s, x) =>
+            {
+                aimmySettings["MouseMoveMethod"] = MouseMethod.DropdownBox.SelectedItem.ToString();
+            };
+
+            leftPanel.Children.Add(MouseMethod);
+
+            ASlider AIMinimumConfidence = new("AI Minimum Confidence", 1, "% Confidence");
+
+            AIMinimumConfidence.Slider.Minimum = 1;
+            AIMinimumConfidence.Slider.Maximum = 100;
+            AIMinimumConfidence.Slider.Value = aimmySettings["AI_Min_Conf"];
+            AIMinimumConfidence.Slider.TickFrequency = 1;
+            AIMinimumConfidence.Slider.ValueChanged += (s, x) =>
+            {
+                if (lastLoadedModel != "N/A")
+                {
+                    double ConfVal = ((double)AIMinimumConfidence.Slider.Value);
+                    aimmySettings["AI_Min_Conf"] = ConfVal;
+                    _onnxModel.ConfidenceThreshold = (float)(ConfVal / 100.0f);
+                }
+                else
+                {
+                    // Prevent double messageboxes..
+                    if (AIMinimumConfidence.Slider.Value != aimmySettings["AI_Min_Conf"])
+                    {
+                        System.Windows.Forms.MessageBox.Show("Unable to set confidence, please select a model and try again.", "Slider Error");
+                        AIMinimumConfidence.Slider.Value = aimmySettings["AI_Min_Conf"];
+                    }
+                }
+            };
+
+            leftPanel.Children.Add(AIMinimumConfidence);
+
+
+            bool topMostInitialState = toggleState.ContainsKey("TopMost") ? toggleState["TopMost"] : false;
+
+            AToggle TopMost = new("UI TopMost");
+            TopMost.Reader.Name = "TopMost";
+            SetupToggle(TopMost, state => Bools.TopMost = state, topMostInitialState);
+
+            leftPanel.Children.Add(TopMost);
+
+            AButton SaveConfigSystem = new("Save Config",
 "This will save the current config for the purposes of publishing.");
 
             SaveConfigSystem.Reader.Click += (s, e) =>
@@ -1318,9 +1363,43 @@ namespace AimmyWPF
                     });
 
                     SelectedModelNotifier.Content = "Loaded Model: " + selectedModel;
+                    modelSwitchModel = lastLoadedModel;
                     lastLoadedModel = selectedModel;
 
                     ModelLoadDebounce = false;
+                }
+            }
+        }
+
+        private void ModelSwitch() {
+            if (modelSwitchModel != "N/A") {
+                if (!ModelLoadDebounce)
+                {
+                    if (!(Bools.ConstantTracking && Bools.AIAimAligner))
+                    {
+                        ModelLoadDebounce = true;
+
+                        string selectedModel = SelectorListBox.SelectedItem?.ToString();
+                        if (selectedModel == null) return;
+
+                        string modelPath = Path.Combine("bin/models", modelSwitchModel);
+
+                        _onnxModel?.Dispose();
+                        Task.Delay(100);
+                        Task.Run(() => _onnxModel = new AIModel(modelPath)
+                        {
+                            ConfidenceThreshold = (float)(aimmySettings["AI_Min_Conf"] / 100.0f),
+                            CollectData = toggleState["CollectData"],
+                            FovSize = (int)aimmySettings["FOV_Size"]
+                        });
+
+                        SelectedModelNotifier.Content = "Loaded Model: " + modelSwitchModel;
+                        string temp = modelSwitchModel;
+                        modelSwitchModel = lastLoadedModel;
+                        lastLoadedModel = temp;
+
+                        ModelLoadDebounce = false;
+                    }
                 }
             }
         }
@@ -1536,19 +1615,6 @@ namespace AimmyWPF
 
             SettingsScroller.Children.Add(new AInfoSection());
 
-            AToggle CollectDataWhilePlaying = new("Collect Data While Playing");
-            CollectDataWhilePlaying.Reader.Name = "CollectData";
-            SetupToggle(CollectDataWhilePlaying, state => Bools.CollectDataWhilePlaying = state, Bools.CollectDataWhilePlaying);
-            aimingConfigurationPanel.Children.Add(CollectDataWhilePlaying);
-
-            bool topMostInitialState = toggleState.ContainsKey("TopMost") ? toggleState["TopMost"] : false;
-
-            AToggle TopMost = new("UI TopMost");
-            TopMost.Reader.Name = "TopMost";
-            SetupToggle(TopMost, state => Bools.TopMost = state, topMostInitialState);
-
-            aimingConfigurationPanel.Children.Add(TopMost);
-
             AColorChanger MenuColor = new("Theme Color");
             MenuColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString("#712fc6");
             MenuColor.Reader.Click += (s, x) =>
@@ -1696,7 +1762,10 @@ namespace AimmyWPF
                 var extendedSettings = new Dictionary<string, object>();
                 foreach (var kvp in aimmySettings)
                 {
-                    extendedSettings[kvp.Key] = kvp.Value;
+                    if (kvp.Key != "MouseMoveMethod")
+                    {
+                        extendedSettings[kvp.Key] = kvp.Value;
+                    }
                 }
 
                 // Add topmost
