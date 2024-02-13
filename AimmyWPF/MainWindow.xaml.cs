@@ -25,6 +25,7 @@ namespace AimmyWPF
 {
     public partial class MainWindow : Window
     {
+
         private PredictionManager predictionManager;
         private OverlayWindow FOVOverlay;
         private PlayerDetectionWindow DetectedPlayerOverlay;
@@ -197,7 +198,7 @@ namespace AimmyWPF
             bindingManager.Setup();
             bindingManager.OnBindingPressed += (binding) =>
             {
-                if ((KeyDown.Contains(binding) == false))
+                if (KeyDown.Contains(binding) == false)
                 {
                     KeyDown.Add(binding);
                     if (binding == RecoilToggleKey){ ToggleRecoil(); }
@@ -414,7 +415,6 @@ namespace AimmyWPF
 
             Console.WriteLine(AIModel.AIConfidence.ToString());
 
-            bool IsHolding_Binding = (KeyDown.Contains(key1) || (Bools.SecondKey && KeyDown.Contains(key2)));
             // Handle Prediction
             if (toggleState["PredictionToggle"])
             {
@@ -428,8 +428,7 @@ namespace AimmyWPF
                 predictionManager.UpdateKalmanFilter(detection);
                 var predictedPosition = predictionManager.GetEstimatedPosition();
 
-                if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
-                    MoveCrosshair(predictedPosition.X, predictedPosition.Y);
+                MoveCrosshair(predictedPosition.X, predictedPosition.Y);
                 //MoveCrosshair(predictedPosition.X, predictedPosition.Y);
 
                 if (Bools.ShowDetectedPlayerWindow && Bools.ShowPrediction)
@@ -445,8 +444,7 @@ namespace AimmyWPF
             }
             else
             {
-                if ((Bools.AimOnlyWhenBindingHeld && IsHolding_Binding) || Bools.AimOnlyWhenBindingHeld == false)
-                    MoveCrosshair(detectedX, detectedY);
+                MoveCrosshair(detectedX, detectedY);
             }
 
             if (Bools.ShowDetectedPlayerWindow)
@@ -488,7 +486,7 @@ namespace AimmyWPF
                     {
                         await ModelCapture();
                     }
-                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBotActive"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
+                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBotEnabled"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
                     {
                         await ModelCapture(true);
                     }
