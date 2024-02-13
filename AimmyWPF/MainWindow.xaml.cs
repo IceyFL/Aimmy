@@ -20,6 +20,7 @@ using System.Windows.Media;
 using Visualization;
 using DiscordRPC;
 using static AimmyWPF.PredictionManager;
+using SecondaryWindows;
 
 namespace AimmyWPF
 {
@@ -1354,7 +1355,7 @@ namespace AimmyWPF
 
             SaveConfigSystem.Reader.Click += (s, e) =>
             {
-                new SecondaryWindows.ConfigSaver(aimmySettings, lastLoadedModel).ShowDialog();
+                new ConfigSaver(aimmySettings, lastLoadedModel).ShowDialog();
             };
 
             leftPanel.Children.Add(SaveConfigSystem);
@@ -1428,6 +1429,7 @@ namespace AimmyWPF
                     });
 
                     SelectedModelNotifier.Content = "Loaded Model: " + selectedModel;
+                    new NoticeBar("Loaded Model: " + selectedModel).Show();
                     modelSwitchModel = lastLoadedModel;
                     lastLoadedModel = selectedModel;
 
@@ -1459,6 +1461,7 @@ namespace AimmyWPF
                         });
 
                         SelectedModelNotifier.Content = "Loaded Model: " + modelSwitchModel;
+                        new NoticeBar("Loaded Model: " + modelSwitchModel).Show();
                         string temp = modelSwitchModel;
                         modelSwitchModel = lastLoadedModel;
                         lastLoadedModel = temp;
@@ -1651,6 +1654,7 @@ namespace AimmyWPF
             if (ConfigSelectorListBox.SelectedItem != null)
             {
                 await LoadConfigAsync($"bin/configs/{ConfigSelectorListBox.SelectedItem.ToString()}");
+                new NoticeBar("Loaded Config: " + ConfigSelectorListBox.SelectedItem.ToString()).Show();
             }
         }
 

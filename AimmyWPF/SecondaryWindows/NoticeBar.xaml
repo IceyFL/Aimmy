@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SecondaryWindows"
         mc:Ignorable="d"
         Title="NoticeBar"
         Height="450"
@@ -15,17 +14,22 @@
         Foreground="{x:Null}"
         WindowState="Maximized"
         Topmost="True">
-    <Grid>
+    <Grid Margin="0,0,0,0">
         <Border x:Name="Notice"
                 Width="350"
                 Height="40"
-                Background="#FF0F0F0F"
                 CornerRadius="5,5,5,5"
                 BorderBrush="#FF1E1E1E"
                 BorderThickness="2"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Center"
                 Margin="0,0,0,100">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#000000" Offset="0"/>
+                    <GradientStop Color="#0f0333" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
             <Label x:Name="ContentText"
                    Content="This feature has not been implemented yet."
                    Foreground="#DDFFFFFF"

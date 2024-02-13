@@ -79,7 +79,7 @@ namespace AimmyWPF.UserController {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Twitter;component/usercontroller/afilepicker.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/aimmy2;component/usercontroller/afilepicker.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\UserController\AFilePicker.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

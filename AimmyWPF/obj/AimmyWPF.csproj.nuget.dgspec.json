@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "C:\\Users\\OwenT\\Documents\\GitHub\\Undetected-Aimmy\\AimmyWPF\\AimmyWPF.csproj",
-        "projectName": "Twitter",
+        "projectName": "aimmy2",
         "projectPath": "C:\\Users\\OwenT\\Documents\\GitHub\\Undetected-Aimmy\\AimmyWPF\\AimmyWPF.csproj",
         "packagesPath": "C:\\Users\\OwenT\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\OwenT\\Documents\\GitHub\\Undetected-Aimmy\\AimmyWPF\\obj\\",
@@ -87,6 +87,10 @@
             "Octokit": {
               "target": "Package",
               "version": "[9.1.2, )"
+            },
+            "ScreenCapture.NET.DX11": {
+              "target": "Package",
+              "version": "[2.0.3, )"
             },
             "XamlRadialProgressBar": {
               "target": "Package",

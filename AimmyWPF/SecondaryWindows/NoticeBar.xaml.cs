@@ -1,5 +1,5 @@
 ﻿using AimmyWPF.Class;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -11,6 +11,7 @@ namespace SecondaryWindows
     public partial class NoticeBar : Window
     {
         private static int openNoticeCount = 0;
+        private static List<NoticeBar> openNoticeBars = new List<NoticeBar>();
         private const int NoticeHeight = 40; // Height of each notice
         private const int Spacing = 5;       // Spacing between notices
         private const int BaseMargin = 100;  // Base margin from the bottom
@@ -19,6 +20,7 @@ namespace SecondaryWindows
         {
             InitializeComponent();
             ContentText.Content = text;
+            this.Notice.Width = (text.Length * 6.75) + 25;
             Loaded += OnLoaded;
         }
 
@@ -30,6 +32,7 @@ namespace SecondaryWindows
 
         private async void ShowNotice()
         {
+            openNoticeBars.Add(this);
             openNoticeCount++;
             Animator.Fade(Notice);
             await Task.Delay(4000);
@@ -40,6 +43,7 @@ namespace SecondaryWindows
 
         private void CloseNotice()
         {
+            openNoticeBars.Remove(this);
             openNoticeCount--;
             AdjustMarginsForAll();
             this.Close();
@@ -48,18 +52,23 @@ namespace SecondaryWindows
         private void AdjustMargin()
         {
             int bottomMargin = BaseMargin + (openNoticeCount * (NoticeHeight + Spacing));
+            if (openNoticeCount >= 2) { bottomMargin = BaseMargin + (2 * (NoticeHeight + Spacing)); }
             Notice.Margin = new Thickness(0, 0, 0, bottomMargin);
         }
 
-        private static void AdjustMarginsForAll()
+        private void AdjustMarginsForAll()
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            try
             {
-                foreach (Window window in Application.Current.Windows.OfType<NoticeBar>())
+                Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    (window as NoticeBar)?.AdjustMargin();
-                }
-            });
+                    NoticeBar firstNoticeBar = openNoticeBars[1];
+                    firstNoticeBar.Notice.Margin = new Thickness(0, 0, 0, 100);
+                    NoticeBar secondsNoticeBar = openNoticeBars[2];
+                    secondsNoticeBar.Notice.Margin = new Thickness(0, 0, 0, 145);
+                });
+            }
+            catch { }
         }
     }
 }

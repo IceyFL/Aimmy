@@ -12,6 +12,10 @@ C:\Users\OwenT\.nuget\packages\microsoft.xaml.behaviors.wpf\1.1.39\lib\net5.0-wi
 C:\Users\OwenT\.nuget\packages\mousekeyhook\5.7.1\lib\net7.0-windows7.0\Gma.System.MouseKeyHook.dll
 C:\Users\OwenT\.nuget\packages\newtonsoft.json\13.0.3\lib\net6.0\Newtonsoft.Json.dll
 C:\Users\OwenT\.nuget\packages\octokit\9.1.2\lib\netstandard2.0\Octokit.dll
+C:\Users\OwenT\.nuget\packages\screencapture.net\2.0.3\lib\net8.0\ScreenCapture.NET.dll
+C:\Users\OwenT\.nuget\packages\screencapture.net.dx11\2.0.3\lib\net8.0\ScreenCapture.NET.DX11.dll
+C:\Users\OwenT\.nuget\packages\sharpgen.runtime\2.0.0-beta.13\lib\net7.0\SharpGen.Runtime.dll
+C:\Users\OwenT\.nuget\packages\sharpgen.runtime.com\2.0.0-beta.13\lib\net7.0\SharpGen.Runtime.COM.dll
 C:\Users\OwenT\.nuget\packages\system.appcontext\4.3.0\lib\netstandard1.6\System.AppContext.dll
 C:\Users\OwenT\.nuget\packages\system.buffers\4.3.0\lib\netstandard1.1\System.Buffers.dll
 C:\Users\OwenT\.nuget\packages\system.collections.concurrent\4.3.0\lib\netstandard1.3\System.Collections.Concurrent.dll
@@ -36,4 +40,8 @@ C:\Users\OwenT\.nuget\packages\system.threading\4.3.0\lib\netstandard1.3\System.
 C:\Users\OwenT\.nuget\packages\system.threading.tasks.extensions\4.3.0\lib\netstandard1.0\System.Threading.Tasks.Extensions.dll
 C:\Users\OwenT\.nuget\packages\system.xml.readerwriter\4.3.0\lib\netstandard1.3\System.Xml.ReaderWriter.dll
 C:\Users\OwenT\.nuget\packages\system.xml.xdocument\4.3.0\lib\netstandard1.3\System.Xml.XDocument.dll
+C:\Users\OwenT\.nuget\packages\vortice.direct3d11\3.2.0\lib\net7.0\Vortice.Direct3D11.dll
+C:\Users\OwenT\.nuget\packages\vortice.directx\3.2.0\lib\net7.0\Vortice.DirectX.dll
+C:\Users\OwenT\.nuget\packages\vortice.dxgi\3.2.0\lib\net7.0\Vortice.DXGI.dll
+C:\Users\OwenT\.nuget\packages\vortice.mathematics\1.5.2\lib\net7.0\Vortice.Mathematics.dll
 C:\Users\OwenT\.nuget\packages\xamlradialprogressbar\1.0.3\lib\netcoreapp3.1\XamlRadialProgressBar.dll

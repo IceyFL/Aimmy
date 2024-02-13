@@ -71,7 +71,7 @@ namespace AimmyWPF.UserController {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Twitter;component/usercontroller/adropdown.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/aimmy2;component/usercontroller/adropdown.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\UserController\ADropdown.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
