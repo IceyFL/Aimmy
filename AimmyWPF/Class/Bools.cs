@@ -24,5 +24,7 @@
         public static bool Triggerbot = false;
         public static bool CollectDataWhilePlaying = false;
         public static bool TopMost = false;
+
+        public static bool DiscordRPC = false;
     }
 }

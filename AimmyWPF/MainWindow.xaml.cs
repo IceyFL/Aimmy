@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Visualization;
+using DiscordRPC;
 using static AimmyWPF.PredictionManager;
 
 namespace AimmyWPF
@@ -29,6 +30,9 @@ namespace AimmyWPF
         private PlayerDetectionWindow DetectedPlayerOverlay;
         private FileSystemWatcher fileWatcher;
         private FileSystemWatcher ConfigfileWatcher;
+
+        private DiscordRpcClient client;
+        private bool lastLoadedDiscord = false;
 
         private string lastLoadedModel = "N/A";
         private string modelSwitchModel = "N/A";
@@ -54,12 +58,14 @@ namespace AimmyWPF
         public bool RecoilToggleKeyChange = false;
         public bool ToggleKeyChange = false;
         public bool ModelSwitchKeyChange = false;
+        public bool TriggerBotKeyChange = false;
         string key1 = "Right";
         string key2 = "Left";
         string RecoilKey = "Left";
         string RecoilToggleKey = "P";
         string ToggleKey = "O";
         string ModelSwitchKey = "L";
+        string TriggerBotKey = "Right";
         private CancellationTokenSource cts;
 
         private enum MenuPosition
@@ -104,6 +110,7 @@ namespace AimmyWPF
             { "PredictionToggle", false },
             { "AimViewToggle", false },
             { "TriggerBot", false },
+            { "TriggerBotEnabled", false },
             { "CollectData", false },
             { "ModelSwitch", false },
             { "TopMost", false }
@@ -127,6 +134,7 @@ namespace AimmyWPF
         AKeyChanger Change_KeyPress2;
         AKeyChanger ToggleKeyChanger;
         AKeyChanger ModelSwitchKeyChanger;
+        AKeyChanger TriggerBotKeyChanger;
         AToggle RecoilState;
         AToggle Enable_AIAimAligner;
 
@@ -195,6 +203,7 @@ namespace AimmyWPF
                     if (binding == RecoilToggleKey){ ToggleRecoil(); }
                     else if (binding == ToggleKey) { if (Bools.AIAimAligner) { ToggleAim(); } }
                     else if (binding == ModelSwitchKey && toggleState["ModelSwitch"] == true) { ModelSwitch(); }
+                    else if (binding == TriggerBotKey && toggleState["TriggerBot"] == true) { toggleState["TriggerBotEnabled"] = true; }
                 }
                 if (Key1Change) { key1 = binding; Key1Change = false; Change_KeyPress.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress, binding); }
                 else if (Key2Change) { key2 = binding; Key2Change = false; Change_KeyPress2.KeyNotifier.Content = binding; Change_Keysize(Change_KeyPress2, binding); }
@@ -202,8 +211,9 @@ namespace AimmyWPF
                 else if (RecoilToggleKeyChange) { RecoilToggleKey = binding; RecoilToggleKeyChange = false; RecoilToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(RecoilToggleKeyChanger, binding); }
                 else if (ToggleKeyChange) { ToggleKey = binding; ToggleKeyChange = false; ToggleKeyChanger.KeyNotifier.Content = binding; Change_Keysize(ToggleKeyChanger, binding); }
                 else if (ModelSwitchKeyChange) { ModelSwitchKey = binding; ModelSwitchKeyChange= false; ModelSwitchKeyChanger.KeyNotifier.Content = binding; Change_Keysize(ModelSwitchKeyChanger, binding); }
+                else if (TriggerBotKeyChange) { TriggerBotKey = binding; TriggerBotKeyChange = false; TriggerBotKeyChanger.KeyNotifier.Content = binding; Change_Keysize(TriggerBotKeyChanger, binding); }
             };
-            bindingManager.OnBindingReleased += (binding) => { try { KeyDown.Remove(binding); } catch {} };
+            bindingManager.OnBindingReleased += (binding) => { try { KeyDown.Remove(binding); if (binding == TriggerBotKey && toggleState["TriggerBotEnabled"] == true) { toggleState["TriggerBotEnabled"] = false; } } catch {} };
 
             // Load UI
             InitializeMenuPositions();
@@ -369,7 +379,7 @@ namespace AimmyWPF
 
             mouseMove((int)newPosition.X, (int)newPosition2.Y);
 
-            if (toggleState["TriggerBot"])
+            if (toggleState["TriggerBotEnabled"])
             {
                 Task.Run(DoTriggerClick);
             }
@@ -478,7 +488,7 @@ namespace AimmyWPF
                     {
                         await ModelCapture();
                     }
-                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBot"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
+                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBotActive"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
                     {
                         await ModelCapture(true);
                     }
@@ -534,8 +544,39 @@ namespace AimmyWPF
                     string title = randomNumber.ToString("D4");
                     this.Title = title;
                 });
+
+                if (lastLoadedDiscord != Bools.DiscordRPC) 
+                { 
+                    if (Bools.DiscordRPC) { StartRPC(); }
+                    else { client.Dispose(); }
+                    lastLoadedDiscord = Bools.DiscordRPC;
+                }
                 await Task.Delay((int)aimmySettings["RecoilActivationDelay"]);
             }
+        }
+
+        public void StartRPC() 
+        {
+            client = new DiscordRpcClient("1206745366746103839"); // Replace "Your Application ID" with your actual Discord application ID
+
+            client.SetPresence(new RichPresence
+            {
+                Details = "Using Aimmy - Second Eye Assist",
+                State = "Having an Unfair Advantage",
+                Timestamps = new Timestamps(DateTime.UtcNow),
+                Assets = new Assets
+                {
+                    LargeImageKey = "pluh",
+                    LargeImageText = "Aimmy"
+                },
+                Buttons = new DiscordRPC.Button[]
+                {
+                    new DiscordRPC.Button { Label = "Discord", Url = "https://discord.gg/aimmy" },
+                    new DiscordRPC.Button { Label = "Github", Url = "https://github.com/IceyFL/Undetected-Aimmy" }
+                }
+            });
+
+            client.Initialize();
         }
 
         public void StopModelCaptureLoop()
@@ -970,6 +1011,16 @@ namespace AimmyWPF
 
             SectionPanel leftPanel2 = new SectionPanel();
 
+            TriggerBotKeyChanger = new("Auto Trigger Keybind", "Right");
+            TriggerBotKeyChanger.Reader.Click += (s, x) =>
+            {
+                TriggerBotKeyChanger.KeyNotifier.Content = "Listening..";
+                Change_Keysize(TriggerBotKeyChanger, "Listening..");
+                TriggerBotKeyChange = true;
+            };
+
+            leftPanel1.Children.Add(TriggerBotKeyChanger);
+
 
             leftPanel2.Children.Add(new ALabel("Anti Recoil"));
 
@@ -1233,6 +1284,7 @@ namespace AimmyWPF
             Change_Keysize(RecoilToggleKeyChanger, "P");
             Change_Keysize(ToggleKeyChanger, "O");
             Change_Keysize(ModelSwitchKeyChanger, "L");
+            Change_Keysize(TriggerBotKeyChanger, "Right");
 
         }
 
@@ -1313,6 +1365,21 @@ namespace AimmyWPF
             leftPanel.VerticalAlignment = VerticalAlignment.Top;
             Grid.SetColumn(leftPanel, 0);
             MiscScroller.Children.Add(leftPanel);
+
+            SectionPanel rightPanel = new SectionPanel();
+
+            rightPanel.Children.Add(new ALabel("Discord"));
+
+
+            AToggle DiscordRPCToggle = new("Discord Rich Presence");
+            DiscordRPCToggle.Reader.Name = "DiscordRPC";
+            SetupToggle(DiscordRPCToggle, state => Bools.DiscordRPC = state, Bools.DiscordRPC);
+            rightPanel.Children.Add(DiscordRPCToggle);
+
+
+            rightPanel.VerticalAlignment = VerticalAlignment.Top;
+            Grid.SetColumn(rightPanel, 2);
+            MiscScroller.Children.Add(rightPanel);
         }
 
         private void FileWatcher_Reload(object sender, FileSystemEventArgs e)
@@ -1633,6 +1700,7 @@ namespace AimmyWPF
                 }
             };
             aimingConfigurationPanel.Children.Add(MenuColor);
+
 
             SettingsScroller.Children.Add(aimingConfigurationPanel);
 
