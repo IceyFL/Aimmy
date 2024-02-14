@@ -6,13 +6,21 @@
 
 
 This is a modified version of [Aimmy](https://github.com/Babyhamsta/Aimmy)
-It is modified in a way that it should be undetectable as it now has a constantly changing title.
-It is also under the namespace Steam rather than AimmyWPF, if a lot of people begin to use this version, to ensure your version is not detected go into properties and change the default namespace and assembly name.
 
-It also has extra features such as, anti-recoil, AI FPS Limiter, 2 different aiming methods and a collect data option that includes data annotations for you(refer to Quicker AI Training folder)
+I decided to make this due to Aimmy deciding to go closed-source.
+I have tried to add features that i have seen in the Aimmy-V2 previews and features that have been suggested to me.
+I have also changed the namespace and over identifiers/flags so that it is less likely to get you banned on games.
 
-I also decided to remove the mouse sensitivity and add 2 seperate ones that control the sensitivity on the X and Y axis seperately
+
+Some main things that make this better than the last published open-source version of Aimmy:
+It has instant model switching to remove the lag inbetween.
+I have copyed the V2 UI to make it look nicer and up to date.
+It has recoil control.
+It has notifications for model/config loading.
+
+
+If you want to compile your own version i highly recommend changed the default namespace and assembaly name in project settings to give it unique identifiers.
+It needs to be compiled as x64.
 
 You can join my [Discord](https://discord.gg/MpSKK9epc7) and message me(hackacat) if you need any help.
 
-Make sure to compile as x64 Release
