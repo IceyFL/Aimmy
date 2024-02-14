@@ -12,8 +12,8 @@
     <NeutralLanguage>en</NeutralLanguage>
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyName>aimmy2</AssemblyName>
-    <RootNamespace>pluh</RootNamespace>
+    <AssemblyName>Koolaid</AssemblyName>
+    <RootNamespace>Koolaid</RootNamespace>
     <UserSecretsId>91e3774b-f88b-47b5-a970-7978ab291c7a</UserSecretsId>
   </PropertyGroup>
 

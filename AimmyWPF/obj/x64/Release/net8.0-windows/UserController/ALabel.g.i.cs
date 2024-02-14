@@ -60,7 +60,7 @@ namespace AimmyWPF.UserController {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/aimmy2;component/usercontroller/alabel.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Koolaid;component/usercontroller/alabel.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\UserController\ALabel.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

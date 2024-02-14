@@ -77,7 +77,7 @@ namespace Visualization {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/aimmy2;component/visualization/playerdetectionwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Koolaid;component/visualization/playerdetectionwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\Visualization\PlayerDetectionWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

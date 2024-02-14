@@ -68,7 +68,7 @@ namespace AimmyWPF.UserController {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/aimmy2;component/usercontroller/abutton.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Koolaid;component/usercontroller/abutton.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\UserController\AButton.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

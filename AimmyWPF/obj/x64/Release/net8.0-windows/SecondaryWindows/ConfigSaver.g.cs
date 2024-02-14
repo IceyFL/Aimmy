@@ -132,7 +132,7 @@ namespace SecondaryWindows {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/aimmy2;component/secondarywindows/configsaver.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Koolaid;component/secondarywindows/configsaver.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\..\SecondaryWindows\ConfigSaver.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
