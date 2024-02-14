@@ -20,6 +20,8 @@ It has recoil control.
 It has notifications for model/config loading.  
 
 
+# Making your own version
+
 If you want to compile your own version i highly recommend changed the default namespace and assembaly name in project settings to give it unique identifiers.
 It needs to be compiled as x64.
 
