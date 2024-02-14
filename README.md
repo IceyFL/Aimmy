@@ -7,9 +7,10 @@
 
 This is a modified version of [Aimmy](https://github.com/Babyhamsta/Aimmy)
 
-I decided to make this due to Aimmy deciding to go closed-source.
-I have tried to add features that i have seen in the Aimmy-V2 previews and features that have been suggested to me.
-I have also changed the namespace and over identifiers/flags so that it is less likely to get you banned on games.
+I decided to make this due to Aimmy deciding to go closed-source.  
+I have tried to add features that i have seen in the Aimmy-V2 previews and features that have been suggested to me.  
+I have also changed the namespace and over identifiers/flags so that it is less likely to get you banned on games.  
+This should reduce chances of you being banned in games for using the program.
 
 
 # Some main things that make this better than the last published open-source version of Aimmy:
