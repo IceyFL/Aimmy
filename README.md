@@ -12,7 +12,7 @@ I have tried to add features that i have seen in the Aimmy-V2 previews and featu
 I have also changed the namespace and over identifiers/flags so that it is less likely to get you banned on games.
 
 
-Some main things that make this better than the last published open-source version of Aimmy:
+# Some main things that make this better than the last published open-source version of Aimmy:
 
 It has instant model switching to remove the lag inbetween.  
 I have copyed the V2 UI to make it look nicer and up to date.  
