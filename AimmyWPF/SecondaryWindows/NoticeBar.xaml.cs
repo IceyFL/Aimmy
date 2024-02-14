@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SecondaryWindows
 {
@@ -16,10 +17,13 @@ namespace SecondaryWindows
         private const int Spacing = 5;       // Spacing between notices
         private const int BaseMargin = 100;  // Base margin from the bottom
 
-        public NoticeBar(string text)
+        public NoticeBar(string text, string hexColor = "#0f0333")
         {
             InitializeComponent();
             ContentText.Content = text;
+            System.Windows.Media.LinearGradientBrush brush = this.Wassuh;
+            System.Windows.Media.Color color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hexColor);
+            brush.GradientStops[1].Color = color;
             this.Notice.Width = (text.Length * 6.75) + 25;
             Loaded += OnLoaded;
         }

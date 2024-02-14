@@ -26,7 +26,6 @@ namespace AimmyWPF
 {
     public partial class MainWindow : Window
     {
-
         private PredictionManager predictionManager;
         private OverlayWindow FOVOverlay;
         private PlayerDetectionWindow DetectedPlayerOverlay;
@@ -129,6 +128,7 @@ namespace AimmyWPF
             { "PDW_Opacity", 1 }
         };
 
+
         //setup needed buttons and toggles
         AKeyChanger RecoilKeyChanger;
         AKeyChanger RecoilToggleKeyChanger;
@@ -139,6 +139,7 @@ namespace AimmyWPF
         AKeyChanger TriggerBotKeyChanger;
         AToggle RecoilState;
         AToggle Enable_AIAimAligner;
+        AColorChanger MenuColor;
 
         private Thickness WinTooLeft = new(-1680, 0, 1680, 0);
         private Thickness WinVeryLeft = new(-1120, 0, 1120, 0);
@@ -492,17 +493,6 @@ namespace AimmyWPF
                         await ModelCapture(true);
                     }
                 }
-
-                //if (toggleState["AimbotToggle"] && (IsHolding_Binding || toggleState["AlwaysOn"]))
-                //{
-                //    await ModelCapture();
-                //}
-                //else if (!toggleState["AimbotToggle"] && toggleState["TriggerBot"] && IsHolding_Binding) // Triggerbot Only
-                //{
-                //    await ModelCapture(true);
-                //}
-
-                // We have to have some sort of delay here to not overload the CPU / reduce CPU usage.
                 await Task.Delay(1);
             }
         }
@@ -1429,7 +1419,7 @@ namespace AimmyWPF
                     });
 
                     SelectedModelNotifier.Content = "Loaded Model: " + selectedModel;
-                    new NoticeBar("Loaded Model: " + selectedModel).Show();
+                    new NoticeBar("Loaded Model: " + selectedModel, OverlayProperties["MenuColor"]).Show();
                     modelSwitchModel = lastLoadedModel;
                     lastLoadedModel = selectedModel;
 
@@ -1461,7 +1451,7 @@ namespace AimmyWPF
                         });
 
                         SelectedModelNotifier.Content = "Loaded Model: " + modelSwitchModel;
-                        new NoticeBar("Loaded Model: " + modelSwitchModel).Show();
+                        new NoticeBar("Loaded Model: " + modelSwitchModel, OverlayProperties["MenuColor"]).Show();
                         string temp = modelSwitchModel;
                         modelSwitchModel = lastLoadedModel;
                         lastLoadedModel = temp;
@@ -1654,7 +1644,7 @@ namespace AimmyWPF
             if (ConfigSelectorListBox.SelectedItem != null)
             {
                 await LoadConfigAsync($"bin/configs/{ConfigSelectorListBox.SelectedItem.ToString()}");
-                new NoticeBar("Loaded Config: " + ConfigSelectorListBox.SelectedItem.ToString()).Show();
+                new NoticeBar("Loaded Config: " + ConfigSelectorListBox.SelectedItem.ToString(), OverlayProperties["MenuColor"]).Show();
             }
         }
 
@@ -1684,8 +1674,9 @@ namespace AimmyWPF
 
             SettingsScroller.Children.Add(new AInfoSection());
 
-            AColorChanger MenuColor = new("Theme Color");
+            MenuColor = new("Theme Color");
             MenuColor.ColorChangingBorder.Background = (Brush)new BrushConverter().ConvertFromString("#712fc6");
+            OverlayProperties["MenuColor"] = "#0f0333";
             MenuColor.Reader.Click += (s, x) =>
             {
                 ColorDialog colorDialog = new ColorDialog();

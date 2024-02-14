@@ -25,7 +25,7 @@
                 HorizontalAlignment="Center"
                 Margin="0,0,0,100">
             <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <LinearGradientBrush x:Name="Wassuh" StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="#000000" Offset="0"/>
                     <GradientStop Color="#0f0333" Offset="1"/>
                 </LinearGradientBrush>

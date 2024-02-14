@@ -1,10 +1,10 @@
-﻿using AimmyWPF.Class;
-using KdTree;
+﻿using KdTree;
 using KdTree.Math;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -157,7 +157,7 @@ namespace AimmyAimbot
                                                    detectionBoxSize);
 
             // Capture a screenshot
-            Bitmap frame = ScreenGrab(detectionBox);
+            Bitmap frame = ScreenGrab(detectionBox); ;
 
             // Convert the Bitmap to float array and normalize
             float[] inputArray = BitmapToFloatArray(frame);
