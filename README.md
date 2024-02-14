@@ -14,10 +14,10 @@ I have also changed the namespace and over identifiers/flags so that it is less 
 
 Some main things that make this better than the last published open-source version of Aimmy:
 
-It has instant model switching to remove the lag inbetween.
-I have copyed the V2 UI to make it look nicer and up to date.
-It has recoil control.
-It has notifications for model/config loading.
+It has instant model switching to remove the lag inbetween.  
+I have copyed the V2 UI to make it look nicer and up to date.  
+It has recoil control.  
+It has notifications for model/config loading.  
 
 
 If you want to compile your own version i highly recommend changed the default namespace and assembaly name in project settings to give it unique identifiers.
