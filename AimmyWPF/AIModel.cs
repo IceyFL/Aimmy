@@ -4,12 +4,10 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -123,23 +121,26 @@ namespace AimmyAimbot
         {
             int height = image.Height;
             int width = image.Width;
+            int stride;
             float[] result = new float[3 * height * width];
-            Rectangle rect = new Rectangle(0, 0, width, height);
-            BitmapData bmpData = image.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
-            IntPtr ptr = bmpData.Scan0;
-            int bytes = Math.Abs(bmpData.Stride) * height;
-            byte[] rgbValues = new byte[bytes];
-
-            Marshal.Copy(ptr, rgbValues, 0, bytes);
-            for (int i = 0; i < rgbValues.Length / 3; i++)
+            BitmapData bmpData = image.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            unsafe
             {
-                int index = i * 3;
-                result[i] = rgbValues[index + 2] / 255.0f; // R
-                result[height * width + i] = rgbValues[index + 1] / 255.0f; // G
-                result[2 * height * width + i] = rgbValues[index] / 255.0f; // B
-            }
+                byte* ptr = (byte*)bmpData.Scan0;
+                stride = bmpData.Stride;
 
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        int index = y * stride + x * 3;
+                        result[y * width + x] = ptr[index + 2] / 255.0f; // R
+                        result[height * width + y * width + x] = ptr[index + 1] / 255.0f; // G
+                        result[2 * height * width + y * width + x] = ptr[index] / 255.0f; // B
+                    }
+                }
+            }
             image.UnlockBits(bmpData);
 
             return result;

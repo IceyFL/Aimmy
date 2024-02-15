@@ -139,7 +139,7 @@ namespace AimmyWPF
         AKeyChanger TriggerBotKeyChanger;
         AToggle RecoilState;
         AToggle Enable_AIAimAligner;
-        AColorChanger MenuColor;
+        AColorChanger MenuColor;    
 
         private Thickness WinTooLeft = new(-1680, 0, 1680, 0);
         private Thickness WinVeryLeft = new(-1120, 0, 1120, 0);
@@ -477,22 +477,34 @@ namespace AimmyWPF
             {
                 bool IsHolding_Binding = (KeyDown.Contains(key1) || (Bools.SecondKey && KeyDown.Contains(key2)));
                 TimeSpan elapsed = DateTime.Now - lastExecutionTime;
-                if (elapsed.TotalMilliseconds > 1000.0 / aimmySettings["AIFPS"])
+                lastExecutionTime = DateTime.Now;
+
+                if ((toggleState["AimbotToggle"] && !Bools.ConstantTracking && IsHolding_Binding) ||
+                    (toggleState["AimbotToggle"] && Bools.ConstantTracking))
                 {
-                    lastExecutionTime = DateTime.Now;
-                    if (toggleState["AimbotToggle"] && Bools.ConstantTracking==false && IsHolding_Binding)
+                    if (elapsed.TotalMilliseconds < 1000.0 / aimmySettings["AIFPS"])
                     {
-                        await ModelCapture();
+                        try
+                        {
+                            Task.Delay(1000.0 / aimmySettings["AIFPS"] - elapsed.TotalMilliseconds);
+                        }
+                        catch { }
                     }
-                    else if (toggleState["AimbotToggle"] && Bools.ConstantTracking)
-                    {
-                        await ModelCapture();
-                    }
-                    else if (!toggleState["AimbotToggle"] && toggleState["TriggerBotEnabled"] && IsHolding_Binding && Bools.ConstantTracking == false) // Triggerbot Only
-                    {
-                        await ModelCapture(true);
-                    }
+                    await ModelCapture();
                 }
+                else if (!toggleState["AimbotToggle"] && toggleState["TriggerBotEnabled"] && IsHolding_Binding && !Bools.ConstantTracking) // Triggerbot Only
+                {
+                    if (elapsed.TotalMilliseconds < 1000.0 / aimmySettings["AIFPS"])
+                    {
+                        try
+                        {
+                            Task.Delay(1000.0 / aimmySettings["AIFPS"] - elapsed.TotalMilliseconds);
+                        }
+                        catch { }
+                    }
+                    await ModelCapture(true);
+                }
+
                 await Task.Delay(1);
             }
         }

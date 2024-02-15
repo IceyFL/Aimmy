@@ -80,10 +80,6 @@
               "target": "Package",
               "version": "[5.7.1, )"
             },
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.3, )"
-            },
             "Octokit": {
               "target": "Package",
               "version": "[9.1.2, )"
