@@ -8,11 +8,27 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AimmyAimbot
 {
+    public static class Win32API
+    {
+        public const int SRCCOPY = 0x00CC0020;
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDC(IntPtr hwnd);
+
+        [DllImport("user32.dll")]
+        public static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+    }
+
+
     public class AIModel : IDisposable
     {
         private const int IMAGE_SIZE = 640;
@@ -28,7 +44,8 @@ namespace AimmyAimbot
         private DateTime lastSavedTime = DateTime.MinValue;
         private List<string> _outputNames;
 
-        private Bitmap _screenCaptureBitmap = null;
+        private Bitmap _screenCaptureBitmap = new Bitmap(IMAGE_SIZE, IMAGE_SIZE); // Initialize _screenCaptureBitmap with a default size
+
 
         // Image size will always be 640x640
         private static byte[] _rgbValuesCache = new byte[640 * 640 * 3];
@@ -104,16 +121,35 @@ namespace AimmyAimbot
 
         public Bitmap ScreenGrab(Rectangle detectionBox)
         {
-            if (_screenCaptureBitmap == null || _screenCaptureBitmap.Width != detectionBox.Width || _screenCaptureBitmap.Height != detectionBox.Height)
+            // Ensure a bitmap exists and matches the required size
+            if (_screenCaptureBitmap == null ||
+                _screenCaptureBitmap.Width != detectionBox.Width ||
+                _screenCaptureBitmap.Height != detectionBox.Height)
             {
+                // Dispose of the existing bitmap if needed
                 _screenCaptureBitmap?.Dispose();
+
+                // Create a new bitmap with the required size
                 _screenCaptureBitmap = new Bitmap(detectionBox.Width, detectionBox.Height);
             }
 
-            using (var g = Graphics.FromImage(_screenCaptureBitmap))
+            // Use direct memory copy with the specific area defined
+            using (Graphics g = Graphics.FromImage(_screenCaptureBitmap))
             {
-                g.CopyFromScreen(detectionBox.Left, detectionBox.Top, 0, 0, detectionBox.Size);
+                IntPtr hdc = g.GetHdc(); // Get the device context handle
+                try
+                {
+                    // Capture the screen directly into the bitmap's device context
+                    Win32API.BitBlt(hdc, 0, 0, detectionBox.Width, detectionBox.Height,
+                                    Win32API.GetDC(IntPtr.Zero), detectionBox.Left, detectionBox.Top,
+                                    Win32API.SRCCOPY);
+                }
+                finally
+                {
+                    g.ReleaseHdc(hdc); // Release the device context handle
+                }
             }
+
             return _screenCaptureBitmap;
         }
 
@@ -130,16 +166,24 @@ namespace AimmyAimbot
                 byte* ptr = (byte*)bmpData.Scan0;
                 stride = bmpData.Stride;
 
-                for (int y = 0; y < height; y++)
+                Parallel.For(0, height, y =>
                 {
+                    int rowIndex = y * stride;
+
                     for (int x = 0; x < width; x++)
                     {
-                        int index = y * stride + x * 3;
-                        result[y * width + x] = ptr[index + 2] / 255.0f; // R
-                        result[height * width + y * width + x] = ptr[index + 1] / 255.0f; // G
-                        result[2 * height * width + y * width + x] = ptr[index] / 255.0f; // B
+                        int index = rowIndex + x * 3;
+
+                        float r = ptr[index + 2] / 255.0f; // R
+                        float g = ptr[index + 1] / 255.0f; // G
+                        float b = ptr[index] / 255.0f; // B
+
+                        int resultIndex = y * width + x;
+                        result[resultIndex] = r;
+                        result[resultIndex + height * width] = g;
+                        result[resultIndex + 2 * height * width] = b;
                     }
-                }
+                });
             }
             image.UnlockBits(bmpData);
 
@@ -184,7 +228,49 @@ namespace AimmyAimbot
                                     .ToList();
 
             object treeLock = new object();
+
+            Parallel.ForEach(filteredIndices, i =>
+            {
+                float objectness = outputTensor[0, 4, i];
+                AIConfidence = objectness;
+
+                float x_center = outputTensor[0, 0, i];
+                float y_center = outputTensor[0, 1, i];
+                float width = outputTensor[0, 2, i];
+                float height = outputTensor[0, 3, i];
+
+                float x_min = x_center - width / 2;
+                float y_min = y_center - height / 2;
+                float x_max = x_center + width / 2;
+                float y_max = y_center + height / 2;
+
+                if (x_min >= fovMinX && x_max <= fovMaxX && y_min >= fovMinY && y_max <= fovMaxY)
+                {
+                    var prediction = new Prediction
+                    {
+                        Rectangle = new RectangleF(x_min, y_min, x_max - x_min, y_max - y_min),
+                        Confidence = objectness
+                    };
+
+                    var centerX = (x_min + x_max) / 2.0f;
+                    var centerY = (y_min + y_max) / 2.0f;
+
+                    lock (tree)
+                    {
+                        tree.Add(new[] { centerX, centerY }, prediction);
+                    }
+                }
+            });
+
+            // Collect predictions from the tree
             var predictions = new List<Prediction>();
+            lock (tree)
+            {
+                foreach (var node in tree)
+                {
+                    predictions.Add(node.Value);
+                }
+            }
 
             foreach (var i in filteredIndices)
             {
