@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Babyhamsta")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d5f60475158213a6f6460fd03c630840d847acbe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6c3295943b59cb42ecfe4f404e8317dd4d2b836")]
 [assembly: System.Reflection.AssemblyProductAttribute("Koolaid")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Koolaid")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -52,6 +52,9 @@ namespace AimmyWPF
         private static int ScreenWidth = Screen.PrimaryScreen.Bounds.Width;
         private static int ScreenHeight = Screen.PrimaryScreen.Bounds.Height;
 
+        float scaleX = (float)ScreenWidth / 640f;
+        float scaleY = (float)ScreenHeight / 640f;
+
         private AIModel _onnxModel;
         private InputBindingManager bindingManager;
         public bool Key1Change = false;
@@ -410,15 +413,8 @@ namespace AimmyWPF
                 return;
             }
 
-            float scaleX = (float)ScreenWidth / 640f;
-            float scaleY = (float)ScreenHeight / 640f;
-
-            double YOffset = aimmySettings["Y_Offset"];
-            double XOffset = aimmySettings["X_Offset"];
-            int detectedX = (int)((closestPrediction.Rectangle.X + closestPrediction.Rectangle.Width / 2) * scaleX + XOffset);
-            int detectedY = (int)((closestPrediction.Rectangle.Y + closestPrediction.Rectangle.Height / 2) * scaleY + YOffset);
-
-            Console.WriteLine(AIModel.AIConfidence.ToString());
+            int detectedX = (int)((closestPrediction.Rectangle.X + closestPrediction.Rectangle.Width / 2) * scaleX + aimmySettings["X_Offset"]);
+            int detectedY = (int)((closestPrediction.Rectangle.Y + closestPrediction.Rectangle.Height / 2) * scaleY + aimmySettings["Y_Offset"]);
 
             // Handle Prediction
             if (toggleState["PredictionToggle"])
