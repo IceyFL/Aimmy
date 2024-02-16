@@ -84,6 +84,10 @@
               "target": "Package",
               "version": "[9.1.2, )"
             },
+            "SharpDX.Direct3D11": {
+              "target": "Package",
+              "version": "[4.2.0, )"
+            },
             "XamlRadialProgressBar": {
               "target": "Package",
               "version": "[1.0.3, )"

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "dVipaOM9rwZOXO9lWROvOjdOgDlwd1C/in3vAiFZxD7ZKVmYLRZKq+wdhSh3sAcTs/d3Rh6qIose16OfnWwtTA==",
+  "dgSpecHash": "35a6yAbuOcQ2UItRZJc5lvC97/05OqHhK2P/jXndKrxMFByJ0I/uLBirK9OiAzf2vh56yADiwyATAEl+cmrdoQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\OwenT\\Documents\\GitHub\\Undetected-Aimmy\\AimmyWPF\\AimmyWPF.csproj",
   "expectedPackageFiles": [
@@ -41,6 +41,9 @@
     "C:\\Users\\OwenT\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
+    "C:\\Users\\OwenT\\.nuget\\packages\\sharpdx\\4.2.0\\sharpdx.4.2.0.nupkg.sha512",
+    "C:\\Users\\OwenT\\.nuget\\packages\\sharpdx.direct3d11\\4.2.0\\sharpdx.direct3d11.4.2.0.nupkg.sha512",
+    "C:\\Users\\OwenT\\.nuget\\packages\\sharpdx.dxgi\\4.2.0\\sharpdx.dxgi.4.2.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\system.buffers\\4.3.0\\system.buffers.4.3.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",

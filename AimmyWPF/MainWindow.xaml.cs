@@ -70,6 +70,8 @@ namespace AimmyWPF
         string TriggerBotKey = "Right";
         private CancellationTokenSource cts;
 
+        bool LoadedMenu = false;
+
         private enum MenuPosition
         {
             AimMenu,
@@ -858,7 +860,7 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(FPS);
 
-            Change_KeyPress = new("Aim Keybind", "Right");
+            Change_KeyPress = new("Aim Keybind", key1);
             Change_KeyPress.Reader.Click += (s, x) =>
             {
                 Change_KeyPress.KeyNotifier.Content = "Listening..";
@@ -875,7 +877,7 @@ namespace AimmyWPF
             leftPanel.Children.Add(SecondKey);
 
 
-            Change_KeyPress2 = new("Second Aim Keybind", "Left");
+            Change_KeyPress2 = new("Second Aim Keybind", key2);
             Change_KeyPress2.Reader.Click += (s, x) =>
             {
                 Change_KeyPress2.KeyNotifier.Content = "Listening..";
@@ -896,7 +898,7 @@ namespace AimmyWPF
             SetupToggle(Enable_AIPredictions, state => Bools.AIPredictions = state, Bools.AIPredictions);
             leftPanel.Children.Add(Enable_AIPredictions);
 
-            ToggleKeyChanger = new("Emergency Stop Keybind", "O");
+            ToggleKeyChanger = new("Emergency Stop Keybind", ToggleKey);
             ToggleKeyChanger.Reader.Click += (s, x) =>
             {
                 ToggleKeyChanger.KeyNotifier.Content = "Listening..";
@@ -912,7 +914,7 @@ namespace AimmyWPF
 
             leftPanel.Children.Add(ModelSwitchEnabled);
 
-            ModelSwitchKeyChanger = new("Model Switch Keybind", "L");
+            ModelSwitchKeyChanger = new("Model Switch Keybind", ModelSwitchKey);
             ModelSwitchKeyChanger.Reader.Click += (s, x) =>
             {
                 ModelSwitchKeyChanger.KeyNotifier.Content = "Listening..";
@@ -1029,7 +1031,7 @@ namespace AimmyWPF
 
             SectionPanel leftPanel2 = new SectionPanel();
 
-            TriggerBotKeyChanger = new("Auto Trigger Keybind", "Right");
+            TriggerBotKeyChanger = new("Auto Trigger Keybind", TriggerBotKey);
             TriggerBotKeyChanger.Reader.Click += (s, x) =>
             {
                 TriggerBotKeyChanger.KeyNotifier.Content = "Listening..";
@@ -1047,7 +1049,7 @@ namespace AimmyWPF
             SetupToggle(RecoilState, state => Bools.Recoil = state, Bools.Recoil);
             leftPanel2.Children.Add(RecoilState);
 
-            RecoilKeyChanger = new("Recoil Keybind", "Left");
+            RecoilKeyChanger = new("Recoil Keybind", RecoilKey);
             RecoilKeyChanger.Reader.Click += (s, x) =>
             {
                 RecoilKeyChanger.KeyNotifier.Content = "Listening..";
@@ -1057,7 +1059,7 @@ namespace AimmyWPF
 
             leftPanel2.Children.Add(RecoilKeyChanger);
 
-            RecoilToggleKeyChanger = new("Recoil Toggle Keybind", "P");
+            RecoilToggleKeyChanger = new("Recoil Toggle Keybind", RecoilToggleKey);
             RecoilToggleKeyChanger.Reader.Click += (s, x) =>
             {
                 RecoilToggleKeyChanger.KeyNotifier.Content = "Listening..";
@@ -1298,13 +1300,13 @@ namespace AimmyWPF
             AimScroller.Children.Add(leftPanelsStack);
 
 
-            Change_Keysize(Change_KeyPress, "Right");
-            Change_Keysize(Change_KeyPress2, "Left");
-            Change_Keysize(RecoilKeyChanger, "Left");
-            Change_Keysize(RecoilToggleKeyChanger, "P");
-            Change_Keysize(ToggleKeyChanger, "O");
-            Change_Keysize(ModelSwitchKeyChanger, "L");
-            Change_Keysize(TriggerBotKeyChanger, "Right");
+            Change_Keysize(Change_KeyPress, key1);
+            Change_Keysize(Change_KeyPress2, key2);
+            Change_Keysize(RecoilKeyChanger, RecoilKey);
+            Change_Keysize(RecoilToggleKeyChanger, RecoilToggleKey);
+            Change_Keysize(ToggleKeyChanger, ToggleKey);
+            Change_Keysize(ModelSwitchKeyChanger, ModelSwitchKey);
+            Change_Keysize(TriggerBotKeyChanger, TriggerBotKey);
 
         }
 
