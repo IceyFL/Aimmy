@@ -183,6 +183,7 @@
                                 Tag="SettingsMenu">
                                 <Image Source="Images/SettingsMenu.png" Stretch="Fill" Width="25" Height="25"/>
                             </Button>
+                            <Label Name="FpsCounter" Content="FPS: " VerticalAlignment="Bottom" Foreground="White" HorizontalAlignment="Left"/>
                         </Grid>
                     </Border>
                 </Grid>

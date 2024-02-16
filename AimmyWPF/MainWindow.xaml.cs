@@ -21,6 +21,7 @@ using Visualization;
 using DiscordRPC;
 using static AimmyWPF.PredictionManager;
 using SecondaryWindows;
+using System.Windows.Threading;
 
 namespace AimmyWPF
 {
@@ -78,7 +79,7 @@ namespace AimmyWPF
         }
 
         private DateTime lastExecutionTime = DateTime.MinValue;
-
+        private DateTime lastFireTime = DateTime.MinValue;
 
 
         public List<string> KeyDown = new List<string> { };
@@ -139,7 +140,7 @@ namespace AimmyWPF
         AKeyChanger TriggerBotKeyChanger;
         AToggle RecoilState;
         AToggle Enable_AIAimAligner;
-        AColorChanger MenuColor;    
+        AColorChanger MenuColor;
 
         private Thickness WinTooLeft = new(-1680, 0, 1680, 0);
         private Thickness WinVeryLeft = new(-1120, 0, 1120, 0);
@@ -473,6 +474,10 @@ namespace AimmyWPF
             // Create a new CancellationTokenSource
             cts = new CancellationTokenSource();
 
+            const int FrameBufferSize = 20;
+            Queue<double> frameTimes = new Queue<double>(FrameBufferSize);
+            double totalFrameTime = 0;
+
             while (!cts.Token.IsCancellationRequested)
             {
                 bool IsHolding_Binding = (KeyDown.Contains(key1) || (Bools.SecondKey && KeyDown.Contains(key2)));
@@ -480,29 +485,41 @@ namespace AimmyWPF
                 lastExecutionTime = DateTime.Now;
 
                 if ((toggleState["AimbotToggle"] && !Bools.ConstantTracking && IsHolding_Binding) ||
-                    (toggleState["AimbotToggle"] && Bools.ConstantTracking))
+                    (toggleState["AimbotToggle"] && Bools.ConstantTracking) ||
+                    (!toggleState["AimbotToggle"] && toggleState["TriggerBotEnabled"] && IsHolding_Binding && !Bools.ConstantTracking)) //Trigger only
                 {
                     if (elapsed.TotalMilliseconds < 1000.0 / aimmySettings["AIFPS"])
                     {
                         try
                         {
-                            Task.Delay(1000.0 / aimmySettings["AIFPS"] - elapsed.TotalMilliseconds);
+                            await Task.Delay(TimeSpan.FromMilliseconds(1000.0 / aimmySettings["AIFPS"]) - elapsed);
                         }
                         catch { }
                     }
+
+                    DateTime startTime = DateTime.Now;
                     await ModelCapture();
-                }
-                else if (!toggleState["AimbotToggle"] && toggleState["TriggerBotEnabled"] && IsHolding_Binding && !Bools.ConstantTracking) // Triggerbot Only
-                {
-                    if (elapsed.TotalMilliseconds < 1000.0 / aimmySettings["AIFPS"])
+                    TimeSpan time = DateTime.Now - startTime;
+                    double frameMilliseconds = time.TotalMilliseconds;
+
+                    // Add the frame time to the queue
+                    frameTimes.Enqueue(frameMilliseconds);
+                    totalFrameTime += frameMilliseconds;
+
+                    // If we have more than 20 frames, remove the oldest frame time
+                    if (frameTimes.Count > FrameBufferSize)
                     {
-                        try
-                        {
-                            Task.Delay(1000.0 / aimmySettings["AIFPS"] - elapsed.TotalMilliseconds);
-                        }
-                        catch { }
+                        totalFrameTime -= frameTimes.Dequeue();
                     }
-                    await ModelCapture(true);
+
+                    // Calculate the average FPS over the last 20 frames
+                    double averageFPS = 1000 * FrameBufferSize / totalFrameTime;
+
+                    // Update the FPS counter
+                    Dispatcher.Invoke(() =>
+                    {
+                        FpsCounter.Content = "FPS: " + ((int)averageFPS).ToString();
+                    });
                 }
 
                 await Task.Delay(1);
@@ -1108,6 +1125,7 @@ namespace AimmyWPF
 
             #region FOV System
 
+
             SectionPanel rightPanel1 = new SectionPanel();
 
             rightPanel1.Children.Add(new ALabel("FOV Config"));
@@ -1156,6 +1174,7 @@ namespace AimmyWPF
             };
 
             rightPanel1.Children.Add(FovSlider);
+
 
             #endregion FOV System
 
@@ -1527,12 +1546,6 @@ namespace AimmyWPF
                         }
                     }
                 }
-            }
-            if (aimmySettings["Suggested_Model"] != string.Empty)
-            {
-                System.Windows.Forms.MessageBox.Show("The creator of this model suggests you use this model:" +
-                    "\n" +
-                    aimmySettings["Suggested_Model"], "Suggested Model - Aimmy");
             }
 
             // We'll attempt to update the AI Settings but it may not be loaded yet.

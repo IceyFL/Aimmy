@@ -26,5 +26,7 @@
         public static bool TopMost = false;
 
         public static bool DiscordRPC = false;
+
+        public static bool ShowFPS = false;
     }
 }
