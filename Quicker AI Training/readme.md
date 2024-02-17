@@ -15,3 +15,5 @@ it will pop up a window displaying the images with the annotations overlayed on 
 press y to move the label and image to the filtered folders
 press n to delete the label and image
 press p to move the image and delete the label
+
+# If your System Language uses , for numbers rather than . auto collected labels will not work without switching languages
