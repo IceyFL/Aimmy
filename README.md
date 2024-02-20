@@ -15,7 +15,7 @@ Aimmy is a multi-functional AI-based Aim Aligner that was developed by BabyHamst
 
 Unlike most products of a similar caliber, Aimmy utilizes DirectML, ONNX, and YOLOV8 to detect players and is written in C# instead of Python. This makes it incredibly fast and efficient, and is one of the only AI Aim Aligners that runs well on AMD GPUs, which would not be able to use hardware acceleration otherwise due to the lack of CUDA support. 
 
-Aimmy also has a myriad of [features](#features) that sets itself apart from other AI Aim Aligners, like the ability to hotswap models, and settings that allow you to adjust your aiming accuracy. 
+Aimmy also has a myriad of features that sets itself apart from other AI Aim Aligners, like the ability to hotswap models, and settings that allow you to adjust your aiming accuracy. 
 
 Aimmy is 100% free to use, ad-free, and is actively not for profit. Aimmy is not, and will never be for sale, and is considered a **source-available** product as **we actively discourage other developers from making profit-focused forks of Aimmy**.
 
@@ -44,7 +44,7 @@ The gamer is now left to perform any actions they believe is necessary.
 
 Additionally, a Gamer that uses Aimmy is also given the option to turn on Auto-Trigger. Auto-Trigger relieves the need to repeatedly tap the HID to shoot at a player. This is especially useful for physically challenged users who may have trouble with this action.
 
-## Features
+# Features
 - AI Aim Aligning
 - Aim Keybind Switching
 - Predictions
@@ -53,6 +53,6 @@ Additionally, a Gamer that uses Aimmy is also given the option to turn on Auto-T
 - Auto Trigger and Trigger Delay
 - Hot Model Swapping (No need to reload application)
 - Hot Config Swapping (switch between presets easily)
-- [Downloadable Model System](#how-do-i-upload-my-model-to-the-downloadable-models-menu)
+- Downloadable Model System
 - Image capture while playing (For labeling to further AI training)
 </div>
