@@ -22,6 +22,8 @@ using DiscordRPC;
 using static AimmyWPF.PredictionManager;
 using SecondaryWindows;
 using System.Windows.Threading;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 
 namespace AimmyWPF
 {
@@ -160,6 +162,16 @@ namespace AimmyWPF
         public MainWindow()
         {
             InitializeComponent();
+
+            Selection1.MouseEnter += MouseEnter;
+            Selection1.MouseLeave += _MouseLeave;
+            Selection2.MouseEnter += MouseEnter;
+            Selection2.MouseLeave += _MouseLeave;
+            Selection3.MouseEnter += MouseEnter;
+            Selection3.MouseLeave += _MouseLeave;
+            Selection4.MouseEnter += MouseEnter;
+            Selection4.MouseLeave += _MouseLeave;
+
             MainBorder.MouseMove += MainBorder_MouseMove;
             this.Title = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
 
@@ -635,11 +647,7 @@ namespace AimmyWPF
 
         private void MainBorder_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            UpdateGradientDirection(e.GetPosition(MainBorder));
-        }
-
-        private void UpdateGradientDirection(Point mousePosition)
-        {
+            Point mousePosition = e.GetPosition(MainBorder);
             double xPercentage = mousePosition.X / MainBorder.ActualWidth;
             double yPercentage = mousePosition.Y / MainBorder.ActualHeight;
 
@@ -648,6 +656,61 @@ namespace AimmyWPF
 
             GradientRotation.Angle = angle;
         }
+
+        private void MouseEnter(object sender, EventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button button && button.Content is Image image)
+            {
+                if (button.Name == "Selection1")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/AimMenu2.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+                else if (button.Name == "Selection2")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/MiscMenu2.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+                else if (button.Name == "Selection3")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/SelectorMenu2.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+                else if (button.Name == "Selection4")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/SettingsMenu2.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+            }
+        }
+
+        private void _MouseLeave(object sender, EventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button button && button.Content is Image image)
+            {
+                if (button.Name == "Selection1")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/AimMenu.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+                else if (button.Name == "Selection2")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/MiscMenu.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+                else if (button.Name == "Selection3")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/SelectorMenu.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+                else if (button.Name == "Selection4")
+                {
+                    BitmapImage imageSource = new BitmapImage(new Uri("Images/SettingsMenu.png", UriKind.RelativeOrAbsolute));
+                    image.Source = imageSource;
+                }
+            }
+        }
+
         private void SetToggleState(AToggle toggle)
         {
             bool state = (bool)toggle.Reader.Tag;
@@ -720,34 +783,62 @@ namespace AimmyWPF
         {
             if (sender is System.Windows.Controls.Button clickedButton)
             {
-                MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
+                Storyboard storyboard = new Storyboard();
 
+                // ApplyMenuAnimations and UpdateMenuVisibility methods (replace with your existing logic)
+                MenuPosition position = (MenuPosition)Enum.Parse(typeof(MenuPosition), clickedButton.Tag.ToString());
                 ApplyMenuAnimations(position);
                 UpdateMenuVisibility(position);
 
-                Thickness LeftMargin;
-                Thickness RightMargin;
+                // Update the button margins
+                Thickness leftMargin;
+                Thickness rightMargin;
                 switch (clickedButton.Name)
                 {
                     case "Selection1":
-                        LeftMargin = new Thickness(25, 25, -25, 335);
-                        RightMargin = new Thickness(-25, 25, 25, 335);
+                        leftMargin = new Thickness(25, 25, -25, 335);
+                        rightMargin = new Thickness(-25, 25, 25, 335);
                         break;
                     case "Selection2":
-                        LeftMargin = new Thickness(25, 90, -25, 300);
-                        RightMargin = new Thickness(-25, 90, 25, 300);
+                        leftMargin = new Thickness(25, 90, -25, 300);
+                        rightMargin = new Thickness(-25, 90, 25, 300);
                         break;
                     case "Selection3":
-                        LeftMargin = new Thickness(25, 130, -25, 237);
-                        RightMargin = new Thickness(-25, 130, 25, 237);
+                        leftMargin = new Thickness(25, 130, -25, 237);
+                        rightMargin = new Thickness(-25, 130, 25, 237);
                         break;
                     default:
-                        LeftMargin = new Thickness(25, 175, -25, 180);
-                        RightMargin = new Thickness(-25, 175, 25, 180);
+                        leftMargin = new Thickness(25, 175, -25, 180);
+                        rightMargin = new Thickness(-25, 175, 25, 180);
                         break;
                 }
-                LeftDot.Margin = LeftMargin;
-                RightDot.Margin = RightMargin;
+
+                // Create ThicknessAnimations for LeftDot and RightDot margins
+                ThicknessAnimation leftAnimation = new ThicknessAnimation();
+                leftAnimation.From = LeftDot.Margin;
+                leftAnimation.To = leftMargin;
+                leftAnimation.Duration = TimeSpan.FromSeconds(0.5); // Set your desired duration here
+
+                ThicknessAnimation rightAnimation = new ThicknessAnimation();
+                rightAnimation.From = RightDot.Margin;
+                rightAnimation.To = rightMargin;
+                rightAnimation.Duration = TimeSpan.FromSeconds(0.5); // Set your desired duration here
+
+                // Create and configure the Storyboard for the button margin animations
+                storyboard.Children.Add(leftAnimation);
+                storyboard.Children.Add(rightAnimation);
+                Storyboard.SetTarget(leftAnimation, LeftDot);
+                Storyboard.SetTargetProperty(leftAnimation, new PropertyPath(MarginProperty));
+                Storyboard.SetTarget(rightAnimation, RightDot);
+                Storyboard.SetTargetProperty(rightAnimation, new PropertyPath(MarginProperty));
+
+                // Start the Storyboard
+                storyboard.Begin();
+
+                // Wait for the animation to complete
+                await Task.Delay(TimeSpan.FromSeconds(1));
+
+                // Perform any additional actions after animation completion, if needed
             }
         }
 

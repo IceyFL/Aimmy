@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "35a6yAbuOcQ2UItRZJc5lvC97/05OqHhK2P/jXndKrxMFByJ0I/uLBirK9OiAzf2vh56yADiwyATAEl+cmrdoQ==",
+  "dgSpecHash": "E7lwyC1ALYaNXTPhXVh1ojepx0uOCD3FeeZOzNZFboptU0ZZK/Fnvy1mSim5ZDz0AcAS0ZEEKNIut+x+VfDqZg==",
   "success": true,
   "projectFilePath": "C:\\Users\\OwenT\\Documents\\GitHub\\Undetected-Aimmy\\AimmyWPF\\AimmyWPF.csproj",
   "expectedPackageFiles": [
@@ -44,6 +44,7 @@
     "C:\\Users\\OwenT\\.nuget\\packages\\sharpdx\\4.2.0\\sharpdx.4.2.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\sharpdx.direct3d11\\4.2.0\\sharpdx.direct3d11.4.2.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\sharpdx.dxgi\\4.2.0\\sharpdx.dxgi.4.2.0.nupkg.sha512",
+    "C:\\Users\\OwenT\\.nuget\\packages\\sharpvectors\\1.8.4\\sharpvectors.1.8.4.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\system.buffers\\4.3.0\\system.buffers.4.3.0.nupkg.sha512",
     "C:\\Users\\OwenT\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",

@@ -57,6 +57,7 @@
     <PackageReference Include="MouseKeyHook" Version="5.7.1" />
     <PackageReference Include="Octokit" Version="9.1.2" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="SharpVectors" Version="1.8.4" />
     <PackageReference Include="XamlRadialProgressBar" Version="1.0.3" />
   </ItemGroup>
 
@@ -96,9 +97,17 @@
   <ItemGroup>
     <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
     <None Remove="Images\AimMenu.png" />
+    <None Remove="Images\AimMenu.svg" />
+    <None Remove="Images\AimMenu2.png" />
     <None Remove="Images\MiscMenu.png" />
+    <None Remove="Images\MiscMenu.svg" />
+    <None Remove="Images\MiscMenu2.png" />
     <None Remove="Images\SelectorMenu.png" />
+    <None Remove="Images\SelectorMenu.svg" />
+    <None Remove="Images\SelectorMenu2.png" />
     <None Remove="Images\SettingsMenu.png" />
+    <None Remove="Images\SettingsMenu.svg" />
+    <None Remove="Images\SettingsMenu2.png" />
     <None Remove="MiscMenu.png" />
     <None Remove="SelectorMenu.png" />
     <None Remove="SettingsMenu.png" />
@@ -116,13 +125,6 @@
 
   <ItemGroup>
     <None Remove="C:\Users\OwenT\.nuget\packages\accord\3.8.0\build\Accord.dll.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Images\AimMenu.png" />
-    <Resource Include="Images\MiscMenu.png" />
-    <Resource Include="Images\SelectorMenu.png" />
-    <Resource Include="Images\SettingsMenu.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -163,6 +165,17 @@
 
   <ItemGroup>
     <Content Remove="C:\Users\OwenT\.nuget\packages\microsoft.ai.directml\1.12.1\build\..\bin\x64-win\DirectML.Debug.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\AimMenu.png" />
+    <Resource Include="Images\AimMenu2.png" />
+    <Resource Include="Images\MiscMenu.png" />
+    <Resource Include="Images\MiscMenu2.png" />
+    <Resource Include="Images\SelectorMenu.png" />
+    <Resource Include="Images\SelectorMenu2.png" />
+    <Resource Include="Images\SettingsMenu.png" />
+    <Resource Include="Images\SettingsMenu2.png" />
   </ItemGroup>
   
 </Project>
