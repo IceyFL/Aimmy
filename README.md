@@ -23,9 +23,6 @@ Join our Discord: https://discord.gg/Aimmy
 
 If you want to show Aimmy to your friends, send them to our website: https://aimmy.dev/
 
-## Table of Contents
-[What is the purpose of Aimmy?](#what-is-the-purpose-of-aimmy) | [How does Aimmy Work?](#how-does-aimmy-work) | [Features](#features) | [Setup](#setup) | [How is Aimmy better than similar AI-Based tools?](#how-is-aimmy-better-than-similar-ai-based-tools) | [What is the Web Model?](#what-is-the-web-model) | [How do I train my own model?](#how-do-i-train-my-own-model) | [How do I upload my model to the "Downloadable Models" menu](#how-do-i-upload-my-model-to-the-downloadable-models-menu)
-
 
 
 ## What is the purpose of Aimmy?
@@ -52,20 +49,10 @@ Additionally, a Gamer that uses Aimmy is also given the option to turn on Auto-T
 - Aim Keybind Switching
 - Predictions
 - Bezier Curve Movement + Fake Jitter
-- Undetection Launcher
 - Adjustable FOV, Mouse Sensitivity, X Axis, Y Axis, and Model Confidence
 - Auto Trigger and Trigger Delay
 - Hot Model Swapping (No need to reload application)
 - Hot Config Swapping (switch between presets easily)
 - [Downloadable Model System](#how-do-i-upload-my-model-to-the-downloadable-models-menu)
 - Image capture while playing (For labeling to further AI training)
-
-## Setup
-- Download and Install the x64 version of [.NET Runtime 8.0.X.X](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-8.0.2-windows-x64-installer)
-- Download and Install the x64 version of [Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- Download Aimmy from [Releases](https://github.com/BabyHamsta/Aimmy/releases) (Make sure it's the Aimmy zip and not Source zip)
-- Extract the Aimmy.zip file
-- Run Aimmy.exe
-- Choose your Model and Enjoy :)
-
 </div>
