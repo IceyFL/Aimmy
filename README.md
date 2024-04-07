@@ -2,7 +2,7 @@
 ![image](https://github.com/IceyFL/Undetected-Aimmy/assets/82657910/16805e52-88a4-49a9-988b-71d1faeee0aa)
 
 > [!NOTE]
-> If you enjoy Aimmy, please consider giving us a star ⭐! We appreciate it! :)
+> If you enjoy Aimmy, please consider giving us a star ⭐! We appreciate it! :)   
 > The real source has now been released [here](https://github.com/Babyhamsta/Aimmy/tree/Aimmy-V2)
 
 <div align="center">
