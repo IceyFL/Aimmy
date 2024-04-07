@@ -3,7 +3,7 @@
 
 > [!NOTE]
 > If you enjoy Aimmy, please consider giving us a star ⭐! We appreciate it! :)
-> The real source has now been released ![here](https://github.com/Babyhamsta/Aimmy/tree/Aimmy-V2)
+> The real source has now been released [here](https://github.com/Babyhamsta/Aimmy/tree/Aimmy-V2)
 
 <div align="center">
   
